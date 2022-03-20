@@ -6,7 +6,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 app.get('/api/users/current-user', (req, res) => {
-  res.send('Hi there!');
+  res.send('Hello World');
 });
 
 const PORT = 3000;

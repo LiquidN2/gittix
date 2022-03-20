@@ -1,18 +1,28 @@
-apiVersion: skaffold/v2beta26           # version of the configuration.
-kind: Config                            # always Config
-deploy:                                 # describes how images are deployed.
-  kubectl:                              # beta uses a client side kubectl apply to deploy manifests.
-    manifests:                          # watches for the changes in yaml files in infra/k8s
+apiVersion: skaffold/v2beta26                     # version of the configuration.
+kind: Config                                      # always Config
+deploy:                                           # describes how images are deployed.
+  kubectl:                                        # beta uses a client side kubectl apply to deploy manifests.
+    manifests:                                    # watches for the changes in yaml files in infra/k8s
       - "./infra/k8s/*.yaml"
-build:                                  # describes how the images are built
-  local:                                # [beta] describes how to do a build on the local docker daemon and optionally push to a repository.
-    push: false                         # should images be pushed to a registry
-  artifacts:                            # the images you're going to be building.
-    - image: hhnguyen255/gittix-auth    # name of the image to be built.
-      context: auth                     # the directory containing the artifact's sources.
-      docker:                           # [beta] describes an artifact built from a Dockerfile.
-        dockerfile: Dockerfile          # Locates the Dockerfile relative to workspace.
-      sync:                             # [beta] local files synced to pods instead of triggering an image build when modified.
-        manual:                         # manual sync rules indicating the source and destination.
-          - src: "src/**/*.ts"          # a glob pattern to match local paths against. Directories should be delimited by / on all platforms.
-            dest: .                     # destination path in the container where the files should be synced to.
+build:                                            # describes how the images are built
+  local:                                          # [beta] describes how to do a build on the local docker daemon and optionally push to a repository.
+    push: false                                   # should images be pushed to a registry
+#  googleCloudBuild:                               # [beta] describes how to do a remote build on Google Cloud Build.
+#    projectId: gittix-dev-344709
+  artifacts:                                      # the images you're going to be building.
+    - image: hhnguyen255/gittix-auth              # name of the image to be built.
+      context: auth                               # the directory containing the artifact's sources.
+      docker:                                     # [beta] describes an artifact built from a Dockerfile.
+        dockerfile: Dockerfile                    # Locates the Dockerfile relative to workspace.
+      sync:                                       # [beta] local files synced to pods instead of triggering an image build when modified.
+        manual:                                   # manual sync rules indicating the source and destination.
+          - src: "src/**/*.ts"                    # a glob pattern to match local paths against. Directories should be delimited by / on all platforms.
+            dest: .                               # destination path in the container where the files should be synced to.
+#    - image: us.gcr.io/gittix-dev-344709/auth     # name of the image to be built.
+#      context: auth                               # the directory containing the artifact's sources.
+#      docker:                                     # [beta] describes an artifact built from a Dockerfile.
+#        dockerfile: Dockerfile                    # Locates the Dockerfile relative to workspace.
+#      sync:                                       # [beta] local files synced to pods instead of triggering an image build when modified.
+#        manual:                                   # manual sync rules indicating the source and destination.
+#          - src: "src/**/*.ts"                    # a glob pattern to match local paths against. Directories should be delimited by / on all platforms.
+#            dest: .                               # destination path in the container where the files should be synced to.
