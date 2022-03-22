@@ -1,5 +1,6 @@
 import express from 'express';
 import 'express-async-errors';
+import mongoose from 'mongoose';
 
 import { currentUserRouter } from './routes/current-user';
 import { signupRouter } from './routes/signup';
@@ -27,7 +28,22 @@ app.all('*', async () => {
 // Error Handlers
 app.use(errorHandler);
 
-const PORT = 3000;
-app.listen(PORT, () => {
-  console.log(`✅✅✅ AUTH SERVICE is listening on port ${PORT} ✅✅✅`);
-});
+const init = async () => {
+  // Connect to DB
+  try {
+    await mongoose.connect('mongodb://auth-mongo-srv:27017/auth');
+    console.log('🤝🤝🤝 Connected to AUTHENTICATION DATABASE 🤝🤝🤝');
+  } catch (e) {
+    console.error(e);
+  }
+
+  // Start the server
+  const PORT = 3000;
+  app.listen(PORT, () => {
+    console.log(
+      `✅✅✅ AUTHENTICATION SERVICE is listening on port ${PORT} ✅✅✅`
+    );
+  });
+};
+
+init();
