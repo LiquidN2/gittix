@@ -1,17 +1,11 @@
 import express, { Request, Response } from 'express';
-import { body, validationResult } from 'express-validator';
-import * as jose from 'jose';
-import { createSecretKey } from 'crypto';
+import { body } from 'express-validator';
 
-import { RequestValidationError } from '../errors/request-validation-error';
 import { BadRequestError } from '../errors/bad-request-error';
 import { User } from '../models/user';
 import { validateRequest } from '../middlewares/validate-request';
 
-const JWT_SECRET = process.env.JWT_SECRET as string;
-const JWT_ISSUER = process.env.JWT_ISSUER as string;
-const JWT_AUDIENCE = process.env.JWT_AUDIENCE as string;
-const JWT_EXPIRATION_TIME = process.env.JWT_EXPIRATION_TIME as string;
+import { generateUserJwt } from '../services/jwt';
 
 const router = express.Router();
 
@@ -38,19 +32,10 @@ router.post(
     await user.save();
 
     // Generate JWT
-    // Create a secret key of type KeyObject from a jwt secret
-    const privateKey = createSecretKey(JWT_SECRET, 'utf-8');
-    // Sign the key
-    const userJwt = await new jose.SignJWT({ id: user._id, email: user.email })
-      .setProtectedHeader({ alg: 'HS256' })
-      .setIssuedAt()
-      .setIssuer(JWT_ISSUER)
-      .setAudience(JWT_AUDIENCE)
-      .setExpirationTime(JWT_EXPIRATION_TIME)
-      .sign(privateKey);
+    const jwt = await generateUserJwt({ id: user._id, email: user.email });
 
     // Store JWT on session object
-    req.session = { jwt: userJwt };
+    req.session = { jwt };
 
     res.status(201).send(user);
   }
