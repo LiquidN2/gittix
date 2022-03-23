@@ -25,6 +25,15 @@ interface UserModel extends Model<UserDoc> {
 // SCHEMA
 const schemaOptions: SchemaOptions = {
   timestamps: { createdAt: true, updatedAt: true },
+  toJSON: {
+    // transform the returned JSON
+    transform(doc, ret) {
+      ret.id = ret._id;
+      delete ret._id;
+      delete ret.password;
+    },
+    versionKey: false,
+  },
 };
 
 const userSchema = new Schema<UserDoc>(
