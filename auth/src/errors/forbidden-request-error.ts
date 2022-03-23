@@ -4,12 +4,12 @@ export class ForbiddenRequestError extends CustomError {
   statusCode = 403;
 
   constructor() {
-    super('Unauthorized request');
+    super('Forbidden request');
 
     Object.setPrototypeOf(this, ForbiddenRequestError.prototype);
   }
 
   serializeErrors() {
-    return [{ message: 'Unauthorized request' }];
+    return [{ message: 'Forbidden request' }];
   }
 }

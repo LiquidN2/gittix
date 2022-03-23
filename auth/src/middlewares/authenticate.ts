@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import * as jose from 'jose';
 
 import { verifyUserJwt, UserPayLoad } from '../services/jwt';
-import { ForbiddenRequestError } from '../errors/forbidden-request-error';
+import { UnauthorizedRequestError } from '../errors/unauthorized-request-error';
 
 declare global {
   namespace Express {
@@ -18,11 +18,11 @@ export const authenticate = async (
   next: NextFunction
 ) => {
   // Check if the cookie contains jwt
-  if (!req.session?.jwt) throw new ForbiddenRequestError();
+  if (!req.session?.jwt) throw new UnauthorizedRequestError();
 
   // Check if jwt can be verified
   const payload = (await verifyUserJwt(req.session.jwt)) as UserPayLoad;
-  if (!payload?.id) throw new ForbiddenRequestError();
+  if (!payload?.id) throw new UnauthorizedRequestError();
 
   req.currentUser = payload;
 
