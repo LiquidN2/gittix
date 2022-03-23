@@ -1,11 +1,14 @@
 import { Request, Response, NextFunction } from 'express';
+import * as jose from 'jose';
 
-import { verifyUserJwt } from '../services/jwt';
+import { verifyUserJwt, UserPayLoad } from '../services/jwt';
 import { ForbiddenRequestError } from '../errors/forbidden-request-error';
 
-declare module 'express-serve-static-core' {
-  interface Request {
-    currentUser?: any;
+declare global {
+  namespace Express {
+    interface Request {
+      currentUser?: UserPayLoad | jose.JWTPayload;
+    }
   }
 }
 
@@ -14,13 +17,11 @@ export const authenticate = async (
   _: Response,
   next: NextFunction
 ) => {
-  req.currentUser = null;
-
   // Check if the cookie contains jwt
   if (!req.session?.jwt) throw new ForbiddenRequestError();
 
   // Check if jwt can be verified
-  const payload = await verifyUserJwt(req.session.jwt);
+  const payload = (await verifyUserJwt(req.session.jwt)) as UserPayLoad;
   if (!payload?.id) throw new ForbiddenRequestError();
 
   req.currentUser = payload;

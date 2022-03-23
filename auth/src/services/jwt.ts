@@ -6,15 +6,19 @@ const JWT_ISSUER = process.env.JWT_ISSUER as string;
 const JWT_AUDIENCE = process.env.JWT_AUDIENCE as string;
 const JWT_EXPIRATION_TIME = process.env.JWT_EXPIRATION_TIME as string;
 
-interface UserCredentials extends jose.JWTPayload {
-  id: string;
-  email: string;
-}
-
 const secretKey = createSecretKey(JWT_SECRET, 'utf-8');
 
-export const generateUserJwt = async (userCredentials: UserCredentials) => {
-  return await new jose.SignJWT(userCredentials)
+export interface UserPayLoad extends jose.JWTPayload {
+  id: string;
+  email: string;
+  iat?: number;
+  exp?: number;
+  iss?: string;
+  aud?: string;
+}
+
+export const generateUserJwt = async (userPayload: UserPayLoad) => {
+  return await new jose.SignJWT(userPayload)
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
     .setIssuer(JWT_ISSUER)
@@ -23,7 +27,9 @@ export const generateUserJwt = async (userCredentials: UserCredentials) => {
     .sign(secretKey);
 };
 
-export const verifyUserJwt = async (jwt: string) => {
+export const verifyUserJwt = async (
+  jwt: string
+): Promise<UserPayLoad | jose.JWTPayload> => {
   const { payload } = await jose.jwtVerify(jwt, secretKey, {
     issuer: JWT_ISSUER,
     audience: JWT_AUDIENCE,
