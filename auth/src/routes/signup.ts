@@ -7,10 +7,10 @@ import { RequestValidationError } from '../errors/request-validation-error';
 import { BadRequestError } from '../errors/bad-request-error';
 import { User } from '../models/user';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'jwt_secret';
-const JWT_ISSUER = process.env.JWT_ISSUER || 'gittix:auth-srv:issuer';
-const JWT_AUDIENCE = process.env.JWT_AUDIENCE || 'gittix:auth-srv:audience';
-const JWT_EXPIRATION_TIME = process.env.JWT_EXPIRATION_TIME || '1d';
+const JWT_SECRET = process.env.JWT_SECRET as string;
+const JWT_ISSUER = process.env.JWT_ISSUER as string;
+const JWT_AUDIENCE = process.env.JWT_AUDIENCE as string;
+const JWT_EXPIRATION_TIME = process.env.JWT_EXPIRATION_TIME as string;
 
 const router = express.Router();
 
