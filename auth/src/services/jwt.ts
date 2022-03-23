@@ -11,13 +11,23 @@ interface UserCredentials extends jose.JWTPayload {
   email: string;
 }
 
+const secretKey = createSecretKey(JWT_SECRET, 'utf-8');
+
 export const generateUserJwt = async (userCredentials: UserCredentials) => {
-  const privateKey = createSecretKey(JWT_SECRET, 'utf-8');
   return await new jose.SignJWT(userCredentials)
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
     .setIssuer(JWT_ISSUER)
     .setAudience(JWT_AUDIENCE)
     .setExpirationTime(JWT_EXPIRATION_TIME)
-    .sign(privateKey);
+    .sign(secretKey);
+};
+
+export const verifyUserJwt = async (jwt: string) => {
+  const { payload } = await jose.jwtVerify(jwt, secretKey, {
+    issuer: JWT_ISSUER,
+    audience: JWT_AUDIENCE,
+  });
+
+  return payload;
 };
