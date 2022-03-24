@@ -21,7 +21,7 @@ app.use(
   cookieSession({
     name: 'gittix-session',
     signed: false, // encryption to be handled by JWT
-    secure: true, // send cookie via HTTPS only
+    secure: process.env.NODE_ENV !== 'test', // send cookie via HTTPS only
   })
 );
 

@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "ts-node-dev src/index.ts"
+    "start": "ts-node-dev src/index.ts",
+    "test": "jest --watchAll --no-cache"
   },
   "keywords": [],
   "author": "",
@@ -22,7 +23,9 @@
     "typescript": "^4.6.2"
   },
   "devDependencies": {
+    "@types/jest": "^27.4.1",
     "@types/supertest": "^2.0.12",
+    "dotenv": "^16.0.0",
     "jest": "^27.5.1",
     "mongodb-memory-server": "^8.4.1",
     "supertest": "^6.2.2",
