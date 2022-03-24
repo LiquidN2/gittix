@@ -2,65 +2,51 @@ import request from 'supertest';
 
 import { app } from '../../app';
 
+const userSignUp = (email?: string, password?: string) =>
+  request(app)
+    .post('/api/users/signup')
+    .set('Content-Type', 'application/json')
+    .send({ email, password });
+
 describe('POST /api/users/signup', () => {
+  //---------------------------
+  // SUCCESSFUL REQUESTS
   it('returns status 201 on a successful signup', async () => {
-    await request(app)
-      .post('/api/users/signup')
-      .set('Content-Type', 'application/json')
-      .send({ email: 'test@test.com', password: 'test' })
-      .expect(201);
-  });
-
-  it('returns status 400 with invalid email', async () => {
-    await request(app)
-      .post('/api/users/signup')
-      .set('Content-Type', 'application/json')
-      .send({ email: 'testtest.com', password: 'test' })
-      .expect(400);
-  });
-
-  it('returns status 400 with invalid password', async () => {
-    await request(app)
-      .post('/api/users/signup')
-      .set('content-type', 'application/json')
-      .send({ email: 'test@test.com', password: 'pw' })
-      .expect(400);
-  });
-
-  it('returns status 400 with missing email or password', async () => {
-    await request(app)
-      .post('/api/users/signup')
-      .set('Content-Type', 'application/json')
-      .send({ email: 'test@test.com' })
-      .expect(400);
-
-    await request(app)
-      .post('/api/users/signup')
-      .set('Content-Type', 'application/json')
-      .send({ password: 'abcd1234' })
-      .expect(400);
-  });
-
-  it('disallows duplicate email', async () => {
-    await request(app)
-      .post('/api/users/signup')
-      .set('Content-Type', 'application/json')
-      .send({ email: 'test@test.com', password: 'abcd1234' })
-      .expect(201);
-
-    await request(app)
-      .post('/api/users/signup')
-      .set('Content-Type', 'application/json')
-      .send({ email: 'test@test.com', password: 'abcd1234' })
-      .expect(400);
+    const response = await userSignUp('test@test.com', 'abcd1234');
+    expect(response.status).toEqual(201);
   });
 
   it('sets a cookie after successful signup', async () => {
-    const response = await request(app)
-      .post('/api/users/signup')
-      .set('Content-Type', 'application/json')
-      .send({ email: 'test@test.com', password: 'abcd1234' });
-
+    const response = await userSignUp('test@test.com', 'abcd1234');
     expect(response.get('Set-Cookie')).toBeDefined();
+  });
+
+  //---------------------------
+  // FAILED REQUESTS
+  it('returns status 400 with invalid email or password', async () => {
+    // Test invalid email
+    const invalidEmailRes = await userSignUp('testtest.com', 'abcd1234');
+    expect(invalidEmailRes.status).toEqual(400);
+
+    // Test invalid password
+    const invalidPasswordRes = await userSignUp('test@test.com', 'pw');
+    expect(invalidPasswordRes.status).toEqual(400);
+  });
+
+  it('returns status 400 with missing email or password', async () => {
+    // Test missing email
+    const missingEmailRes = await userSignUp(undefined, 'test');
+    expect(missingEmailRes.status).toEqual(400);
+
+    // Test missing password
+    const missingPasswordRes = await userSignUp('test@test.com', undefined);
+    expect(missingPasswordRes.status).toEqual(400);
+  });
+
+  it('disallows duplicate email', async () => {
+    await userSignUp('test@test.com', 'abcd1234');
+
+    const response = await userSignUp('test@test.com', 'abcd1234');
+    expect(response.status).toEqual(400);
   });
 });
