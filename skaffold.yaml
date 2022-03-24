@@ -26,3 +26,11 @@ build:                                            # describes how the images are
 #        manual:                                   # manual sync rules indicating the source and destination.
 #          - src: "src/**/*.ts"                    # a glob pattern to match local paths against. Directories should be delimited by / on all platforms.
 #            dest: .                               # destination path in the container where the files should be synced to.
+    - image: hhnguyen255/gittix-client
+      context: client
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: "src/**/*.tsx"
+            dest: .

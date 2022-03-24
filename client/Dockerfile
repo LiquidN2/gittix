@@ -1,11 +1,8 @@
 FROM node:alpine
 
-WORKDIR /usr/app
-
+WORKDIR /src/app
 COPY ./package.json ./package-lock.json ./
-
-RUN npm ci --only=prod
-
+RUN npm ci
 COPY ./ ./
 
-CMD ["npm", "start"]
+CMD ["npm", "run", "dev"]
