@@ -1,20 +1,4 @@
-import request from 'supertest';
-
-import { app } from '../../app';
-import { User } from '../../models/user';
-
-const mockUserData = { email: 'test@test.com', password: 'abcd1234' };
-
-const setupMockUser = async () => {
-  const user = User.build(mockUserData);
-  return await user.save();
-};
-
-const userSignIn = (email?: string, password?: string) =>
-  request(app)
-    .post('/api/users/signin')
-    .set('Content-Type', 'application/json')
-    .send({ email, password });
+import { mockUserData, setupMockUser, userSignIn } from '../../test/utils';
 
 describe('POST /api/users/signin', () => {
   // ----------------------
@@ -47,7 +31,10 @@ describe('POST /api/users/signin', () => {
     await setupMockUser();
 
     // Test invalid email
-    const invalidEmailRes = await userSignIn('test', mockUserData.password);
+    const invalidEmailRes = await userSignIn(
+      'notexist@test.com',
+      mockUserData.password
+    );
     expect(invalidEmailRes.status).toEqual(400);
 
     // Test invalid password

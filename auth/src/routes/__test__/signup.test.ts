@@ -1,12 +1,4 @@
-import request from 'supertest';
-
-import { app } from '../../app';
-
-const userSignUp = (email?: string, password?: string) =>
-  request(app)
-    .post('/api/users/signup')
-    .set('Content-Type', 'application/json')
-    .send({ email, password });
+import { userSignUp } from '../../test/utils';
 
 describe('POST /api/users/signup', () => {
   //---------------------------
