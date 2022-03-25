@@ -1,5 +1,6 @@
 import type { NextPage, GetServerSideProps } from 'next';
-import axios, { AxiosRequestHeaders } from 'axios';
+// import axios, { AxiosRequestHeaders } from 'axios';
+import { buildClient } from '../api/build-client';
 
 interface HomePageProps {
   currentUser: Record<string, any> | null;
@@ -8,7 +9,7 @@ interface HomePageProps {
 const Home: NextPage<HomePageProps> = ({ currentUser }) => {
   return (
     <div>
-      <h1>Landing page</h1>
+      <h1>Landing page !</h1>
       <p>{currentUser ? 'Logged in' : 'Not logged in'}</p>
     </div>
   );
@@ -17,19 +18,12 @@ const Home: NextPage<HomePageProps> = ({ currentUser }) => {
 export const getServerSideProps: GetServerSideProps<
   HomePageProps
 > = async context => {
-  // This is the same request from the browser
-  const headers = context.req.headers as AxiosRequestHeaders;
-
-  // To make a request from client container to ingress-nginx, use the domain formay
-  // http://[SERVICE_NAME].[NAMESPACE].svc.cluster.local
   let currentUser = null;
-  try {
-    const response = await axios.get(
-      'http://ingress-nginx-controller.ingress-nginx.svc.cluster.local/api/users/currentuser',
-      { headers }
-    );
 
-    currentUser = response.data.currentUser;
+  try {
+    const client = buildClient(context);
+    const { data } = await client.get('/api/users/currentuser');
+    currentUser = data.currentUser;
   } catch (e) {
     currentUser = null;
   }
