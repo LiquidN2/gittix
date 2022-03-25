@@ -1,27 +1,24 @@
 import { FormEventHandler, useState } from 'react';
 import { NextPage } from 'next';
-import axios from 'axios';
 
 import Head from 'next/head';
-import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
+
+import { useRequest } from '../../hooks/use-request';
 
 const SignUp: NextPage = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
 
+  const { doRequest, errors } = useRequest('/api/users/signup', 'post', {
+    email: email.trim(),
+    password: password.trim(),
+  });
+
   const onSubmit: FormEventHandler = async e => {
     e.preventDefault();
-    try {
-      const response = await axios.post('/api/users/signup', {
-        email,
-        password,
-      });
-
-      console.log(response.data);
-    } catch (e: any) {
-      console.log(e.response.data.errors);
-    }
+    await doRequest();
   };
 
   return (
@@ -40,9 +37,7 @@ const SignUp: NextPage = () => {
             onChange={e => setEmail(e.currentTarget.value)}
             required={true}
           />
-          <Form.Text className="text-muted">
-            We'll never share your email with anyone else
-          </Form.Text>
+          {}
         </Form.Group>
 
         <Form.Group className="mb-3" controlId="password">
@@ -52,11 +47,12 @@ const SignUp: NextPage = () => {
             value={password}
             onChange={e => setPassword(e.currentTarget.value)}
             required={true}
-            pattern=".{4,20}"
-            title="4 to 20 characters"
+            // pattern=".{4,20}"
+            // title="4 to 20 characters"
           />
         </Form.Group>
 
+        {errors}
         <Button type="submit">Sign Up</Button>
       </Form>
     </>
