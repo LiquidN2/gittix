@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { useState } from 'react';
+import { ReactElement, useState } from 'react';
 import Alert from 'react-bootstrap/Alert';
 
 interface Error {
@@ -9,15 +9,25 @@ interface Error {
 
 export const useRequest = (
   url: string,
-  method: 'get' | 'post',
-  body: Record<string, any>
+  method: 'get' | 'post' | 'patch' | 'delete',
+  body: Record<string, any>,
+  successCallback?: Function
 ) => {
-  const [errors, setErrors] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [data, setData] = useState<any>(null);
+  const [errors, setErrors] = useState<ReactElement | null>(null);
 
   const doRequest = async () => {
+    setIsLoading(true);
+
     try {
       const response = await axios[method](url, body);
-      return response.data;
+
+      setData(response.data);
+      setIsLoading(false);
+      setErrors(null);
+
+      if (successCallback) successCallback();
     } catch (e: any) {
       // setErrors(e.response.data.errors);
       setErrors(
@@ -31,8 +41,11 @@ export const useRequest = (
           </Alert>
         ) : null
       );
+
+      setIsLoading(false);
+      setData(null);
     }
   };
 
-  return { errors, doRequest };
+  return { doRequest, isLoading, data, errors };
 };

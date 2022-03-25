@@ -1,5 +1,6 @@
 import { FormEventHandler, useState } from 'react';
 import { NextPage } from 'next';
+import { useRouter } from 'next/router';
 
 import Head from 'next/head';
 import Button from 'react-bootstrap/Button';
@@ -8,13 +9,22 @@ import Form from 'react-bootstrap/Form';
 import { useRequest } from '../../hooks/use-request';
 
 const SignUp: NextPage = () => {
+  const router = useRouter();
+
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
 
-  const { doRequest, errors } = useRequest('/api/users/signup', 'post', {
-    email: email.trim(),
-    password: password.trim(),
-  });
+  const { doRequest, errors } = useRequest(
+    '/api/users/signup',
+    'post',
+    {
+      email: email.trim(),
+      password: password.trim(),
+    },
+    async () => {
+      await router.push('/');
+    }
+  );
 
   const onSubmit: FormEventHandler = async e => {
     e.preventDefault();
