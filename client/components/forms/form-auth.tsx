@@ -1,10 +1,11 @@
-import { FC, FormEventHandler, useState } from 'react';
+import { FC, FormEventHandler, useState, useContext, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 
 import { useRequest } from '../../hooks/use-request';
+import { UserContext } from '../../contexts/user-context';
 
 interface FormAuthProps {
   type: 'signup' | 'signin';
@@ -12,9 +13,16 @@ interface FormAuthProps {
 
 const FormAuth: FC<FormAuthProps> = ({ type }) => {
   const router = useRouter();
+  const user = useContext(UserContext);
 
-  const [email, setEmail] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
+  // Redirect to home page if authenticated
+  useEffect(() => {
+    if (!user) return;
+    router.push('/').catch(e => console.log(e));
+  }, [user]);
+
+  const [email, setEmail] = useState<string>('test@test.com');
+  const [password, setPassword] = useState<string>('test');
   const [passwordConfirm, setPasswordConfirm] = useState<string>('');
 
   const { doRequest, errors } = useRequest(
@@ -31,9 +39,13 @@ const FormAuth: FC<FormAuthProps> = ({ type }) => {
 
   const onSubmit: FormEventHandler = async e => {
     e.preventDefault();
-    if (password !== passwordConfirm) return;
+    if (type === 'signup' && password !== passwordConfirm) return;
     await doRequest();
   };
+
+  if (user) {
+    return <div>Redirecting...</div>;
+  }
 
   return (
     <>

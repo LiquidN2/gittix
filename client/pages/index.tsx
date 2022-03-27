@@ -1,5 +1,4 @@
 import type { NextPage, GetServerSideProps } from 'next';
-// import axios, { AxiosRequestHeaders } from 'axios';
 import { buildClient } from '../api/build-client';
 
 interface HomePageProps {
@@ -15,20 +14,15 @@ const Home: NextPage<HomePageProps> = ({ currentUser }) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps<
-  HomePageProps
-> = async context => {
-  let currentUser = null;
-
-  try {
-    const client = buildClient(context);
-    const { data } = await client.get('/api/users/currentuser');
-    currentUser = data.currentUser;
-  } catch (e) {
-    currentUser = null;
-  }
-
-  return { props: { currentUser } };
+export const getServerSideProps: GetServerSideProps = async context => {
+  return { props: {} };
 };
+
+// Home.getInitialProps = async context => {
+//   console.log('executing...');
+//   const client = buildClient(context.req);
+//   const { data } = await client.get('/api/users/currentuser');
+//   return { currentUser: data.currentUser };
+// };
 
 export default Home;
