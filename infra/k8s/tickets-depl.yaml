@@ -16,6 +16,8 @@ spec:
         - name: tickets
           image: hhnguyen255/gittix-tickets
           env:
+            - name: MONGODB_URI
+              value: mongodb://tickets-mongo-srv:27017/tickets
             - name: JWT_SECRET
               valueFrom:
                 secretKeyRef:

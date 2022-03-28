@@ -11,15 +11,15 @@ const init = async () => {
     throw new Error('JWT_AUDIENCE must be defined');
   if (!process.env.JWT_EXPIRATION_TIME)
     throw new Error('JWT_EXPIRATION_TIME must be defined');
+  if (!process.env.MONGODB_URI) throw new Error('MONGODB_URI must be defined');
 
   const PORT = 3000;
   const SERVICE_NAME = 'AUTH';
-  const MONGODB_URI = 'mongodb://auth-mongo-srv:27017/auth';
 
   // Connect to DB
   try {
     console.log(`Connecting to ${SERVICE_NAME}...`);
-    await mongoose.connect(MONGODB_URI);
+    await mongoose.connect(process.env.MONGODB_URI);
     console.log(`🤝🤝🤝 Connected to ${SERVICE_NAME} DB 🤝🤝🤝`);
   } catch (e) {
     console.error(`💥💥💥 Unable to connect to ${SERVICE_NAME} DB`, e);
