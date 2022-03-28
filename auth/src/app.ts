@@ -2,13 +2,11 @@ import express from 'express';
 import cookieSession from 'cookie-session';
 import 'express-async-errors';
 
+import { NotFoundError, errorHandler } from '@hngittix/common';
 import { currentUserRouter } from './routes/current-user';
 import { signupRouter } from './routes/signup';
 import { signinRouter } from './routes/signin';
 import { signoutRouter } from './routes/signout';
-import { NotFoundError } from './errors/not-found-error';
-
-import { errorHandler } from './middlewares/error-handler';
 
 const app = express();
 

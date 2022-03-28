@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
 
-import { authenticate } from '../middlewares/authenticate';
+import { authenticate } from '@hngittix/common';
 
 const router = express.Router();
 
