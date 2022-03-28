@@ -19,6 +19,15 @@ const Header: FC = () => {
     }
   );
 
+  const links = [
+    {
+      url: '/auth/signin',
+      name: 'Sign In',
+      isHidden: !!user,
+    },
+    { url: '/auth/signup', name: 'Sign Up', isHidden: !!user },
+  ];
+
   const signOut: MouseEventHandler<HTMLButtonElement> = async () => {
     await doRequest();
   };
@@ -36,17 +45,14 @@ const Header: FC = () => {
 
       {user && <Button onClick={signOut}>Sign Out</Button>}
 
-      {!user && (
-        <>
-          <Link href="/auth/signup">
-            <Button variant="outline-primary" className="me-2">
-              Sign Up
+      {links.map((link, index) =>
+        !link.isHidden ? (
+          <Link key={index} href={link.url}>
+            <Button className={index === links.length - 1 ? '' : 'me-2'}>
+              {link.name}
             </Button>
           </Link>
-          <Link href="/auth/signin">
-            <Button>Sign In</Button>
-          </Link>
-        </>
+        ) : null
       )}
     </header>
   );
