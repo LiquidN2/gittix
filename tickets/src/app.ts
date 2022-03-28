@@ -3,10 +3,6 @@ import cookieSession from 'cookie-session';
 import 'express-async-errors';
 
 import { NotFoundError, errorHandler } from '@hngittix/common';
-import { currentUserRouter } from './routes/current-user';
-import { signupRouter } from './routes/signup';
-import { signinRouter } from './routes/signin';
-import { signoutRouter } from './routes/signout';
 
 const app = express();
 
@@ -23,13 +19,6 @@ app.use(
     secure: process.env.NODE_ENV !== 'test', // send cookie via HTTPS only
   })
 );
-
-// -----------------------
-// ERROR HANDLERS
-app.use(currentUserRouter);
-app.use(signupRouter);
-app.use(signinRouter);
-app.use(signoutRouter);
 
 // -----------------------
 // ERROR HANDLERS
