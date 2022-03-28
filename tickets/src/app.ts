@@ -4,6 +4,8 @@ import 'express-async-errors';
 
 import { NotFoundError, errorHandler } from '@hngittix/common';
 
+import { newTicketRouter } from './routes/new';
+
 const app = express();
 
 app.set('trust proxy', true);
@@ -19,6 +21,10 @@ app.use(
     secure: process.env.NODE_ENV !== 'test', // send cookie via HTTPS only
   })
 );
+
+// -----------------------
+// ROUTE HANDLERS
+app.use(newTicketRouter);
 
 // -----------------------
 // ERROR HANDLERS
