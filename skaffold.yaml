@@ -34,3 +34,11 @@ build:                                            # describes how the images are
         manual:
           - src: "src/**/*.ts?x"
             dest: .
+    - image: hhnguyen255/gittix-tickets
+      context: tickets
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: "src/**/*.ts"
+            dest: .

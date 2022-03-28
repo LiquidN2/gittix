@@ -12,20 +12,23 @@ const init = async () => {
   if (!process.env.JWT_EXPIRATION_TIME)
     throw new Error('JWT_EXPIRATION_TIME must be defined');
 
+  const PORT = 3000;
+  const SERVICE_NAME = 'AUTH';
+  const MONGODB_URI = 'mongodb://auth-mongo-srv:27017/auth';
+
   // Connect to DB
   try {
-    console.log('Connecting to db...');
-    await mongoose.connect('mongodb://auth-mongo-srv:27017/auth');
-    console.log('🤝🤝🤝 Connected to AUTHENTICATION DATABASE 🤝🤝🤝');
+    console.log(`Connecting to ${SERVICE_NAME}...`);
+    await mongoose.connect(MONGODB_URI);
+    console.log(`🤝🤝🤝 Connected to ${SERVICE_NAME} DB 🤝🤝🤝`);
   } catch (e) {
-    console.error(e);
+    console.error(`💥💥💥 Unable to connect to ${SERVICE_NAME} DB`, e);
   }
 
   // Start the server
-  const PORT = 3000;
   app.listen(PORT, () => {
     console.log(
-      `✅✅✅ AUTHENTICATION SERVICE is listening on port ${PORT} ✅✅✅`
+      `✅✅✅ ${SERVICE_NAME} service is listening on port ${PORT} ✅✅✅`
     );
   });
 };
