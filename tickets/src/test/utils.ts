@@ -1,5 +1,7 @@
 import { generateUserJwt, UserPayLoad } from '@hngittix/common';
 import { Types } from 'mongoose';
+import request from 'supertest';
+import { app } from '../app';
 
 export const mockAuthenticate = async (userPayload?: UserPayLoad) => {
   // Create a userId that is of mongo object id format
@@ -24,4 +26,15 @@ export const mockAuthenticate = async (userPayload?: UserPayLoad) => {
 
   // Return cookie
   return `gittix-session=${base64}`;
+};
+
+export const createTicket = async () => {
+  const cookie = await mockAuthenticate();
+  const response = await request(app)
+    .post('/api/tickets')
+    .set('Content-Type', 'application/json')
+    .set('Cookie', cookie)
+    .send({ title: 'test ticket', price: 10 });
+
+  return { cookie, response };
 };

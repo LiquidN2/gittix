@@ -1,4 +1,4 @@
-import express, { Request, Response } from 'express';
+import { Router, Request, Response } from 'express';
 import { body } from 'express-validator';
 import { Types } from 'mongoose';
 
@@ -13,14 +13,14 @@ import { Ticket } from '../models/ticket';
 
 const { ObjectId } = Types;
 
-const router = express.Router();
+const router = Router();
 
 router.post(
   '/api/tickets',
+  authenticate,
   body('title').trim().notEmpty().withMessage('Title must be valid'),
   body('price').isFloat({ gt: 0 }).withMessage('Price must be greater than 0'),
   validateRequest,
-  authenticate,
   async (req: Request, res: Response) => {
     if (!req.currentUser?.id) throw new UnauthorizedRequestError();
 

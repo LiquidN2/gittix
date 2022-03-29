@@ -8,7 +8,7 @@ interface TicketAttrs {
 }
 
 // An interface that describes the properties that a Ticket Document has
-interface TicketDoc extends Document {
+export interface TicketDoc extends Document {
   title: string;
   price: number;
   userId: Types.ObjectId;
