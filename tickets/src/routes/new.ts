@@ -7,8 +7,8 @@ const router = express.Router();
 
 router.post(
   '/api/tickets',
-  body('title').trim().notEmpty().withMessage('Title of ticket must be valid'),
-  body('price').trim().notEmpty().withMessage('Price must be valid'),
+  body('title').trim().notEmpty().withMessage('Title must be valid'),
+  body('price').isFloat({ gt: 0 }).withMessage('Price must be greater than 0'),
   validateRequest,
   authenticate,
   (req: Request, res: Response) => {

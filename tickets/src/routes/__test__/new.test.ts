@@ -14,7 +14,7 @@ describe('POST /api/tickets', () => {
     const unauthorizedRes = await request(app)
       .post('/api/tickets')
       .set('Content-Type', 'application/json')
-      .send({ title: 'ticket name', price: '200 USD' });
+      .send({ title: 'ticket name', price: 20 });
 
     expect(unauthorizedRes.status).toEqual(401);
 
@@ -23,7 +23,7 @@ describe('POST /api/tickets', () => {
       .post('/api/tickets')
       .set('Cookie', cookie)
       .set('Content-Type', 'application/json')
-      .send({ title: 'ticket name', price: '200 USD' });
+      .send({ title: 'ticket name', price: 20 });
 
     expect(authorizedRes.status).toEqual(201);
   });
@@ -35,7 +35,7 @@ describe('POST /api/tickets', () => {
       .post('/api/tickets')
       .set('Cookie', cookie)
       .set('Content-Type', 'application/json')
-      .send({ title: '', price: '200 USD' });
+      .send({ title: '', price: 20 });
 
     expect(invalidTicketRes.status).toEqual(400);
 
@@ -43,7 +43,7 @@ describe('POST /api/tickets', () => {
       .post('/api/tickets')
       .set('Cookie', cookie)
       .set('Content-Type', 'application/json')
-      .send({ title: 'test ticket title', price: '' });
+      .send({ title: 'test ticket title', price: -5 });
 
     expect(invalidPriceRes.status).toEqual(400);
   });
