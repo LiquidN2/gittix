@@ -4,7 +4,7 @@ import 'express-async-errors';
 
 import { NotFoundError, errorHandler } from '@hngittix/common';
 
-import { newTicketRouter } from './routes/new';
+import { createTicketRouter } from './routes/new';
 
 const app = express();
 
@@ -24,7 +24,7 @@ app.use(
 
 // -----------------------
 // ROUTE HANDLERS
-app.use(newTicketRouter);
+app.use(createTicketRouter);
 
 // -----------------------
 // ERROR HANDLERS
