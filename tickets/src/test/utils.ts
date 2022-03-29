@@ -1,10 +1,14 @@
 import { generateUserJwt, UserPayLoad } from '@hngittix/common';
+import { Types } from 'mongoose';
 
 export const mockAuthenticate = async (userPayload?: UserPayLoad) => {
+  // Create a userId that is of mongo object id format
+  const userId = new Types.ObjectId().toString();
+
   // Create a payload
   const payload = userPayload
     ? userPayload
-    : { id: '1234abcd', email: 'test@test.com' };
+    : { id: userId, email: 'test@test.com' };
 
   // Create JWT
   const jwt = await generateUserJwt(payload);

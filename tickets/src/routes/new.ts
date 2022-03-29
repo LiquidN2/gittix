@@ -1,7 +1,17 @@
 import express, { Request, Response } from 'express';
 import { body } from 'express-validator';
+import { Types } from 'mongoose';
 
-import { validateRequest, authenticate } from '@hngittix/common';
+import {
+  validateRequest,
+  authenticate,
+  UnauthorizedRequestError,
+  BadRequestError,
+} from '@hngittix/common';
+
+import { Ticket } from '../models/ticket';
+
+const { ObjectId } = Types;
 
 const router = express.Router();
 
@@ -11,10 +21,31 @@ router.post(
   body('price').isFloat({ gt: 0 }).withMessage('Price must be greater than 0'),
   validateRequest,
   authenticate,
-  (req: Request, res: Response) => {
+  async (req: Request, res: Response) => {
+    if (!req.currentUser?.id) throw new UnauthorizedRequestError();
+
+    const userIdString = req.currentUser.id;
+
+    if (
+      typeof userIdString !== 'string' ||
+      !ObjectId.isValid(userIdString) ||
+      String(new ObjectId(userIdString)) !== userIdString
+    ) {
+      throw new BadRequestError('userId format must be mongo objectId');
+    }
+    const userId = new ObjectId(userIdString);
+
     const { title, price } = req.body;
 
-    res.status(201).json({});
+    // Create a ticket
+    const ticket = Ticket.build({
+      title,
+      price,
+      userId,
+    });
+    await ticket.save();
+
+    res.status(201).json(ticket);
   }
 );
 

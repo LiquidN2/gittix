@@ -25,6 +25,7 @@ interface UserModel extends Model<UserDoc> {
 // SCHEMA
 const schemaOptions: SchemaOptions = {
   timestamps: { createdAt: true, updatedAt: true },
+  versionKey: false,
   toJSON: {
     // transform the returned JSON
     transform(doc, ret) {
@@ -32,7 +33,6 @@ const schemaOptions: SchemaOptions = {
       delete ret._id;
       delete ret.password;
     },
-    versionKey: false,
   },
 };
 
