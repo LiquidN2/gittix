@@ -7,6 +7,7 @@ import { NotFoundError, errorHandler } from '@hngittix/common';
 import { createTicketRouter } from './routes/new';
 import { updateTicketRouter } from './routes/update';
 import { deleteTicketRouter } from './routes/delete';
+import { showTicketRouter } from './routes/show';
 
 const app = express();
 
@@ -29,6 +30,7 @@ app.use(
 app.use(createTicketRouter);
 app.use(updateTicketRouter);
 app.use(deleteTicketRouter);
+app.use(showTicketRouter);
 
 // -----------------------
 // ERROR HANDLERS

@@ -9,7 +9,7 @@ export const validateTicketCreator = (
   const { currentUser, ticket } = req;
 
   // Check if the request is from the creator of the ticker
-  if (currentUser?.id && ticket.userId.toString() !== currentUser.id) {
+  if (currentUser?.id && ticket?.userId.toString() !== currentUser.id) {
     throw new UnauthorizedRequestError();
   }
 

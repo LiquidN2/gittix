@@ -7,7 +7,7 @@ import { Ticket, TicketDoc } from '../models/ticket';
 declare global {
   namespace Express {
     interface Request {
-      ticket: TicketDoc;
+      ticket: TicketDoc | null;
     }
   }
 }
@@ -35,13 +35,8 @@ export const validateTicket = async (
     throw new BadRequestError('Invalid ticket id');
   }
 
-  // check if ticket exists
-  const ticket = await Ticket.findById(ticketId);
-  if (!ticket) {
-    throw new NotFoundError();
-  }
-
-  req.ticket = ticket;
+  // Find the ticket
+  req.ticket = await Ticket.findById(ticketId);
 
   next();
 };

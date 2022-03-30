@@ -31,7 +31,7 @@ describe(`DELETE ${TEST_ROUTE}/:id`, () => {
     expect(response.status).toEqual(400);
   });
 
-  it('returns status 400 if delete request is not from the ticket creator', async () => {
+  it('returns status 401 if delete request is not from the ticket creator', async () => {
     const { response: createTixRes } = await createTicket();
 
     const newCookie = await mockAuthenticate();
@@ -40,7 +40,7 @@ describe(`DELETE ${TEST_ROUTE}/:id`, () => {
       .delete(`${TEST_ROUTE}/${createTixRes.body.id}`)
       .set('Cookie', newCookie)
       .send();
-    expect(response.status).toEqual(400);
+    expect(response.status).toEqual(401);
   });
 
   it('returns status 200 if ticket is deleted', async () => {
