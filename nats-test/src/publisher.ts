@@ -1,15 +1,19 @@
-import nats from 'node-nats-streaming';
+import { connect } from 'node-nats-streaming';
+import { randomBytes } from 'crypto';
+
+console.clear();
 
 // Create a client
 // This client is connecting to the nats-streaming-server inside the pod of the kubernetes
 // For dev purpose, setup port forwarding:
 // kubectl port-forward [nats_pod_name] 4222:4222
-const stan = nats.connect('gittix', 'abc', {
+const clientID = randomBytes(4).toString('hex');
+const stan = connect('gittix', clientID, {
   url: 'http://localhost:4222',
 });
 
 stan.on('connect', () => {
-  console.log('Publisher connected to NATS');
+  console.log('✅✅✅ PUBLISHER connected to NATS ✅✅✅');
 
   const data = JSON.stringify({
     id: 'abc123',
