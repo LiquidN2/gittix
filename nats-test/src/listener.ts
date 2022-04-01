@@ -13,7 +13,17 @@ const stan = connect('gittix', clientID, { url: 'http://localhost:4222' });
 stan.on('connect', () => {
   console.log('✅✅✅ LISTENER connected to NATS ✅✅✅');
 
-  const options = stan.subscriptionOptions().setManualAckMode(true); //manually tells nats streaming server that the event is process;
+  // Shut down this process if connection is lost
+  stan.on('close', () => {
+    console.log('NATS connection closed');
+    process.exit();
+  });
+
+  const options = stan
+    .subscriptionOptions()
+    .setManualAckMode(true) //manually tells nats streaming server that the event is process;
+    .setDeliverAllAvailable() // get all the messages of the channel from the start
+    .setDurableName('some-durable-name'); // nats will store all events under this name
 
   // the queue group only send events to one of the instances subscribe to the queue group
   const subscription = stan.subscribe(
@@ -34,3 +44,10 @@ stan.on('connect', () => {
     msg.ack();
   });
 });
+
+// Close the NATS connection before shutting down the process
+// Together with stand.on('close', () => process.exit())
+// to ensure that NATS server is not waiting on the client
+// This will prevent event lost
+process.on('SIGINT', () => stan.close());
+process.on('SIGTERM', () => stan.close());
