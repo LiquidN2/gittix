@@ -13,7 +13,7 @@ const stan = connect('gittix', clientID, {
   url: 'http://localhost:4222',
 });
 
-stan.on('connect', () => {
+stan.on('connect', async () => {
   console.log('✅✅✅ PUBLISHER connected to NATS ✅✅✅');
 
   // const data = JSON.stringify({
@@ -24,9 +24,17 @@ stan.on('connect', () => {
   //
   // stan.publish('ticket:created', data, () => console.log('Event published'));
 
-  new TicketCreatedPublisher(stan).publish({
-    id: 'asdcas',
-    title: 'casdcasd',
-    price: 20,
-  });
+  const publisher = new TicketCreatedPublisher(stan);
+
+  try {
+    await publisher.publish({
+      id: 'asdcas',
+      title: 'casdcasd',
+      price: 20,
+    });
+
+    console.log('✅ Event published ✅');
+  } catch (e) {
+    console.log('💥 Event publishing error 💥', e);
+  }
 });
