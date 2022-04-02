@@ -1,5 +1,6 @@
-import { connect } from 'node-nats-streaming';
+import { connect, Stan } from 'node-nats-streaming';
 import { randomBytes } from 'crypto';
+import { TicketCreatedPublisher } from './events/ticket-created-publisher';
 
 console.clear();
 
@@ -15,11 +16,17 @@ const stan = connect('gittix', clientID, {
 stan.on('connect', () => {
   console.log('✅✅✅ PUBLISHER connected to NATS ✅✅✅');
 
-  const data = JSON.stringify({
-    id: 'abc123',
-    title: 'concert',
+  // const data = JSON.stringify({
+  //   id: 'test-id',
+  //   title: 'test-title',
+  //   price: 35,
+  // });
+  //
+  // stan.publish('ticket:created', data, () => console.log('Event published'));
+
+  new TicketCreatedPublisher(stan).publish({
+    id: 'asdcas',
+    title: 'casdcasd',
     price: 20,
   });
-
-  stan.publish('ticket:created', data, () => console.log('Event published'));
 });
