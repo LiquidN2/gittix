@@ -1,5 +1,6 @@
-import { connect, Message } from 'node-nats-streaming';
+import { connect } from 'node-nats-streaming';
 import { randomBytes } from 'crypto';
+import { TicketCreatedListener } from './events/ticket-created-listener';
 
 console.clear();
 
@@ -19,30 +20,32 @@ stan.on('connect', () => {
     process.exit();
   });
 
-  const options = stan
-    .subscriptionOptions()
-    .setManualAckMode(true) //manually tells nats streaming server that the event is process;
-    .setDeliverAllAvailable() // get all the messages of the channel from the start
-    .setDurableName('some-durable-name'); // nats will store all events under this name
+  new TicketCreatedListener(stan).listen();
 
-  // the queue group only send events to one of the instances subscribe to the queue group
-  const subscription = stan.subscribe(
-    'ticket:created',
-    'listenerQueueGroup',
-    options
-  );
-
-  subscription.on('message', (msg: Message) => {
-    const data = msg.getData();
-
-    if (typeof data === 'string') {
-      console.log(`Received event ${msg.getSequence()}, with data: ${data}`);
-    }
-
-    // Manually acknowledge event processed
-    // setManualAckMode(true) must be chained to stan.subscriptionOptions()
-    msg.ack();
-  });
+  // const options = stan
+  //   .subscriptionOptions()
+  //   .setManualAckMode(true) //manually tells nats streaming server that the event is process;
+  //   .setDeliverAllAvailable() // get all the messages of the channel from the start
+  //   .setDurableName('some-durable-name'); // nats will store all events under this name
+  //
+  // // the queue group only send events to one of the instances subscribe to the queue group
+  // const subscription = stan.subscribe(
+  //   'ticket:created',
+  //   'listenerQueueGroup',
+  //   options
+  // );
+  //
+  // subscription.on('message', (msg: Message) => {
+  //   const data = msg.getData();
+  //
+  //   if (typeof data === 'string') {
+  //     console.log(`Received event ${msg.getSequence()}, with data: ${data}`);
+  //   }
+  //
+  //   // Manually acknowledge event processed
+  //   // setManualAckMode(true) must be chained to stan.subscriptionOptions()
+  //   msg.ack();
+  // });
 });
 
 // Close the NATS connection before shutting down the process
