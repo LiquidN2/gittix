@@ -5,6 +5,9 @@ import { validateRequest, authenticate, NotFoundError } from '@hngittix/common';
 import { validateTicket } from '../middlewares/validate-ticket-id';
 import { validateTicketCreator } from '../middlewares/validate-ticket-creator';
 
+import { natsWrapper } from '../nats-wrapper';
+import { TicketUpdatedPublisher } from '../events/publishers/ticket-updated-publisher';
+
 const router = Router();
 
 router.put(
@@ -32,6 +35,14 @@ router.put(
 
     // Save the changes
     await ticket.save();
+
+    // Publish event
+    await new TicketUpdatedPublisher(natsWrapper.client).publish({
+      id: ticket._id,
+      title: ticket.title,
+      price: ticket.price,
+      userId: ticket.userId.toString(),
+    });
 
     // Response
     res.status(200).json({ ticket });

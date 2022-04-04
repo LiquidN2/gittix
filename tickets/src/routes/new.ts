@@ -11,6 +11,7 @@ import {
 
 import { TicketCreatedPublisher } from '../events/publishers/ticket-created-publisher';
 import { Ticket } from '../models/ticket';
+import { natsWrapper } from '../nats-wrapper';
 
 const { ObjectId } = Types;
 
@@ -47,12 +48,12 @@ router.post(
     await ticket.save();
 
     // Publish event
-    // await new TicketCreatedPublisher(client).publish({
-    //   id: ticket._id,
-    //   title: ticket.title,
-    //   price: ticket.price,
-    //   userId: ticket.userId.toString(),
-    // });
+    await new TicketCreatedPublisher(natsWrapper.client).publish({
+      id: ticket._id,
+      title: ticket.title,
+      price: ticket.price,
+      userId: ticket.userId.toString(),
+    });
 
     res.status(201).json(ticket);
   }
