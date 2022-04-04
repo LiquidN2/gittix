@@ -9,6 +9,7 @@ import {
   BadRequestError,
 } from '@hngittix/common';
 
+import { TicketCreatedPublisher } from '../events/publishers/ticket-created-publisher';
 import { Ticket } from '../models/ticket';
 
 const { ObjectId } = Types;
@@ -44,6 +45,14 @@ router.post(
       userId,
     });
     await ticket.save();
+
+    // Publish event
+    // await new TicketCreatedPublisher(client).publish({
+    //   id: ticket._id,
+    //   title: ticket.title,
+    //   price: ticket.price,
+    //   userId: ticket.userId.toString(),
+    // });
 
     res.status(201).json(ticket);
   }
