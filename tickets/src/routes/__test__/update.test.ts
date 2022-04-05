@@ -2,8 +2,7 @@ import request from 'supertest';
 
 import { app } from '../../app';
 import { mockAuthenticate, createTicket } from '../../test/utils';
-
-jest.mock('../../nats-wrapper');
+import { natsWrapper } from '../../nats-wrapper';
 
 const TEST_ROUTE = '/api/tickets';
 
@@ -86,5 +85,20 @@ describe('PUT /api/tickets', () => {
       .send({ title: 'updated ticket title', price: 20 });
 
     expect(response.status).toEqual(200);
+  });
+
+  it('publish an event when ticket us successfully updated', async () => {
+    // Create a ticket
+    const { cookie, response: createTixRes } = await createTicket();
+    const { id: ticketId } = createTixRes.body;
+
+    // Update the ticket created above
+    await request(app)
+      .put(`${TEST_ROUTE}/${ticketId}`)
+      .set('Cookie', cookie)
+      .set('Content-Type', 'application/json')
+      .send({ title: 'updated ticket title', price: 20 });
+
+    expect(natsWrapper.client.publish).toHaveBeenCalled();
   });
 });

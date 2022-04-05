@@ -1,6 +1,8 @@
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import mongoose from 'mongoose';
 
+jest.mock('../nats-wrapper');
+
 let mongod: MongoMemoryServer;
 
 beforeAll(async () => {
@@ -13,6 +15,8 @@ beforeAll(async () => {
 });
 
 beforeEach(async () => {
+  jest.clearAllMocks();
+
   // Get all collections
   const collections = await mongoose.connection.db.collections();
 

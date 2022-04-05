@@ -3,8 +3,7 @@ import request from 'supertest';
 import { app } from '../../app';
 import { mockAuthenticate } from '../../test/utils';
 import { Ticket } from '../../models/ticket';
-
-jest.mock('../../nats-wrapper');
+import { natsWrapper } from '../../nats-wrapper';
 
 const TEST_ROUTE = '/api/tickets';
 
@@ -75,5 +74,17 @@ describe(`POST ${TEST_ROUTE}`, () => {
     const { id: ticketId } = response.body;
     const ticket = await Ticket.findById(ticketId);
     expect(ticket).toBeDefined();
+  });
+
+  it('publishes an event upon successful request', async () => {
+    // Create a new ticket
+    const cookie = await mockAuthenticate();
+    await request(app)
+      .post(TEST_ROUTE)
+      .set('Cookie', cookie)
+      .set('Content-Type', 'application/json')
+      .send({ title: 'Test ticket', price: 20 });
+
+    expect(natsWrapper.client.publish).toHaveBeenCalled();
   });
 });

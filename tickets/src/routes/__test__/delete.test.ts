@@ -2,8 +2,7 @@ import request from 'supertest';
 
 import { app } from '../../app';
 import { createTicket, mockAuthenticate } from '../../test/utils';
-
-jest.mock('../../nats-wrapper');
+import { natsWrapper } from '../../nats-wrapper';
 
 const TEST_ROUTE = '/api/tickets';
 
@@ -53,5 +52,16 @@ describe(`DELETE ${TEST_ROUTE}/:id`, () => {
       .set('Cookie', cookie)
       .send();
     expect(response.status).toEqual(200);
+  });
+
+  it('publishes an event upon successful request', async () => {
+    const { response: createTixRes, cookie } = await createTicket();
+
+    await request(app)
+      .delete(`${TEST_ROUTE}/${createTixRes.body.id}`)
+      .set('Cookie', cookie)
+      .send();
+
+    expect(natsWrapper.client.publish).toHaveBeenCalled();
   });
 });
