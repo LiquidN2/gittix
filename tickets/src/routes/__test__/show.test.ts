@@ -4,6 +4,8 @@ import { Types } from 'mongoose';
 import { app } from '../../app';
 import { createTicket } from '../../test/utils';
 
+jest.mock('../../nats-wrapper');
+
 const { ObjectId } = Types;
 const TEST_ROUTE = '/api/tickets';
 

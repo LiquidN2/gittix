@@ -3,6 +3,8 @@ import request from 'supertest';
 import { app } from '../../app';
 import { createTicket, mockAuthenticate } from '../../test/utils';
 
+jest.mock('../../nats-wrapper');
+
 const TEST_ROUTE = '/api/tickets';
 
 describe(`DELETE ${TEST_ROUTE}/:id`, () => {

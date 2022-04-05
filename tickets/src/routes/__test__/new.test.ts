@@ -4,6 +4,8 @@ import { app } from '../../app';
 import { mockAuthenticate } from '../../test/utils';
 import { Ticket } from '../../models/ticket';
 
+jest.mock('../../nats-wrapper');
+
 const TEST_ROUTE = '/api/tickets';
 
 describe(`POST ${TEST_ROUTE}`, () => {
