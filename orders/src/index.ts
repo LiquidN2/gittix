@@ -1,23 +1,8 @@
-// import { initializeServer } from '@hngittix/common';
-// import { app } from './app';
-//
-// const SERVICE_NAME = 'TICKETS';
-//
-// initializeServer(app, {
-//   serviceName: SERVICE_NAME,
-//   natsConnectionEnabled: true,
-// }).catch(error =>
-//   console.error(
-//     `💥💥💥 Something went wrong with ${SERVICE_NAME} service 💥💥💥`,
-//     error
-//   )
-// );
-
 import type { Express } from 'express';
 import mongoose from 'mongoose';
 
 import { app } from './app';
-import { natsWrapper } from './nats-wrapper';
+// import { natsWrapper } from './nats-wrapper';
 
 interface AppOptions {
   serviceName: string;
@@ -49,32 +34,32 @@ export const initializeServer = async (
   }
 
   // Connect to NATS
-  if (natsConnectionEnabled) {
-    if (!process.env.NATS_URL) throw new Error('NATS_URL must be defined');
-    if (!process.env.NATS_CLUSTER_ID)
-      throw new Error('NATS_CLUSTER_ID must be defined');
-    if (!process.env.NATS_CLIENT_ID)
-      throw new Error('NATS_CLIENT_ID must be defined');
-
-    try {
-      await natsWrapper.connect(
-        process.env.NATS_CLUSTER_ID,
-        process.env.NATS_CLIENT_ID,
-        process.env.NATS_URL
-      );
-      console.log('🤝🤝🤝 Connected to NATS 🤝🤝🤝');
-
-      // CLose NATS connection upon signal interruption and termination
-      natsWrapper.client.on('close', () => {
-        console.log('NATS connection closed!');
-        process.exit();
-      });
-      process.on('SIGINT', () => natsWrapper.client.close());
-      process.on('SIGTERM', () => natsWrapper.client.close());
-    } catch (e) {
-      console.error('Unable to connect to NATS', e);
-    }
-  }
+  // if (natsConnectionEnabled) {
+  //   if (!process.env.NATS_URL) throw new Error('NATS_URL must be defined');
+  //   if (!process.env.NATS_CLUSTER_ID)
+  //     throw new Error('NATS_CLUSTER_ID must be defined');
+  //   if (!process.env.NATS_CLIENT_ID)
+  //     throw new Error('NATS_CLIENT_ID must be defined');
+  //
+  //   try {
+  //     await natsWrapper.connect(
+  //       process.env.NATS_CLUSTER_ID,
+  //       process.env.NATS_CLIENT_ID,
+  //       process.env.NATS_URL
+  //     );
+  //     console.log('🤝🤝🤝 Connected to NATS 🤝🤝🤝');
+  //
+  //     // CLose NATS connection upon signal interruption and termination
+  //     natsWrapper.client.on('close', () => {
+  //       console.log('NATS connection closed!');
+  //       process.exit();
+  //     });
+  //     process.on('SIGINT', () => natsWrapper.client.close());
+  //     process.on('SIGTERM', () => natsWrapper.client.close());
+  //   } catch (e) {
+  //     console.error('Unable to connect to NATS', e);
+  //   }
+  // }
 
   // Start the server
   app.listen(PORT, () => {
@@ -84,7 +69,7 @@ export const initializeServer = async (
   });
 };
 
-const SERVICE_NAME = 'TICKETS';
+const SERVICE_NAME = 'ORDERS';
 
 initializeServer(app, {
   serviceName: SERVICE_NAME,
