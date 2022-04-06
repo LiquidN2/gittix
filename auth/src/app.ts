@@ -18,7 +18,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(
   cookieSession({
-    name: 'gittix-session',
+    name: process.env.COOKIE_SESSION_NAME,
     signed: false, // encryption to be handled by JWT
     secure: process.env.NODE_ENV !== 'test', // send cookie via HTTPS only
   })
