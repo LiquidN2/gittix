@@ -3,7 +3,10 @@ import cookieSession from 'cookie-session';
 import 'express-async-errors';
 
 import { NotFoundError, errorHandler } from '@hngittix/common';
+import { indexOrderRouter } from './routes';
+import { deleteOrderRouter } from './routes/delete';
 import { createOrderRouter } from './routes/new';
+import { showOrderRouter } from './routes/show';
 
 const app = express();
 
@@ -26,7 +29,13 @@ app.use(
 
 // -----------------------
 // ROUTE HANDLERS
+// /api/orders/:id
+app.use(showOrderRouter);
+app.use(deleteOrderRouter);
+
+// /api/orders
 app.use(createOrderRouter);
+app.use(indexOrderRouter);
 
 // -----------------------
 // ERROR HANDLERS
