@@ -4,9 +4,10 @@ import 'express-async-errors';
 
 import { NotFoundError, errorHandler } from '@hngittix/common';
 
+import { indexTicketRouter } from './routes';
+import { deleteTicketRouter } from './routes/delete';
 import { createTicketRouter } from './routes/new';
 import { updateTicketRouter } from './routes/update';
-import { deleteTicketRouter } from './routes/delete';
 import { showTicketRouter } from './routes/show';
 
 const app = express();
@@ -30,10 +31,14 @@ app.use(
 
 // -----------------------
 // ROUTE HANDLERS
-app.use(createTicketRouter);
-app.use(updateTicketRouter);
+// /api/tickets/:id
 app.use(deleteTicketRouter);
+app.use(updateTicketRouter);
 app.use(showTicketRouter);
+
+// /api/tickets
+app.use(createTicketRouter);
+app.use(indexTicketRouter);
 
 // -----------------------
 // ERROR HANDLERS

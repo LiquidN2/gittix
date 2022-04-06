@@ -1,15 +1,9 @@
 import { Router, Request, Response } from 'express';
 
-import { Ticket } from '../models/ticket';
 import { validateTicket } from '../middlewares/validate-ticket-id';
 import { NotFoundError } from '@hngittix/common';
 
 const router = Router();
-
-router.get('/api/tickets', async (req: Request, res: Response) => {
-  const tickets = await Ticket.find({});
-  res.status(200).send({ tickets: tickets || [] });
-});
 
 router.get(
   '/api/tickets/:id',
