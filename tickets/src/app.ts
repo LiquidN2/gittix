@@ -17,9 +17,12 @@ app.set('trust proxy', true);
 // GLOBAL MIDDLEWARES
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+
+if (!process.env.COOKIE_SESSION_NAME)
+  throw new Error('COOKIE_SESSION_NAME must be defined');
 app.use(
   cookieSession({
-    name: 'gittix-session',
+    name: process.env.COOKIE_SESSION_NAME,
     signed: false, // encryption to be handled by JWT
     secure: process.env.NODE_ENV !== 'test', // send cookie via HTTPS only
   })

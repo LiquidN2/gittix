@@ -1,18 +1,3 @@
-// import { initializeServer } from '@hngittix/common';
-// import { app } from './app';
-//
-// const SERVICE_NAME = 'TICKETS';
-//
-// initializeServer(app, {
-//   serviceName: SERVICE_NAME,
-//   natsConnectionEnabled: true,
-// }).catch(error =>
-//   console.error(
-//     `💥💥💥 Something went wrong with ${SERVICE_NAME} service 💥💥💥`,
-//     error
-//   )
-// );
-
 import type { Express } from 'express';
 import mongoose from 'mongoose';
 

@@ -16,6 +16,8 @@ spec:
         - name: tickets
           image: hhnguyen255/gittix-tickets
           env:
+            - name: COOKIE_SESSION_NAME
+              value: gittix-session
             - name: NATS_URL
               value: http://nats-srv:4222
             - name: NATS_CLUSTER_ID
