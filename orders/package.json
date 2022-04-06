@@ -11,7 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@hngittix/common": "^1.0.17",
+    "@hngittix/common": "^1.0.19",
     "@types/cookie-session": "^2.0.44",
     "@types/express": "^4.17.13",
     "cookie-session": "^2.0.0",

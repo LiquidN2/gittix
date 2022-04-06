@@ -16,7 +16,7 @@ export interface TicketDoc extends Document {
   updatedAt: string;
 }
 
-// An interface that describes the properties that a User Model has
+// An interface that describes the properties that a Ticket Model has
 interface TicketModel extends Model<TicketDoc> {
   build(attrs: TicketAttrs): TicketDoc;
 }
