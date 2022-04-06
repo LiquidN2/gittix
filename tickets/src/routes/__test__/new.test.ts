@@ -1,7 +1,7 @@
 import request from 'supertest';
+import { mockAuthenticate } from '@hngittix/common';
 
 import { app } from '../../app';
-import { mockAuthenticate } from '../../test/utils';
 import { Ticket } from '../../models/ticket';
 import { natsWrapper } from '../../nats-wrapper';
 

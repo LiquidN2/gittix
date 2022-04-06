@@ -1,7 +1,8 @@
 import request from 'supertest';
+import { mockAuthenticate } from '@hngittix/common';
 
 import { app } from '../../app';
-import { mockAuthenticate, createTicket } from '../../test/utils';
+import { createTicket } from '../../test/utils';
 import { natsWrapper } from '../../nats-wrapper';
 
 const TEST_ROUTE = '/api/tickets';
