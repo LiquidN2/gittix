@@ -18,24 +18,44 @@ describe(`GET ${TEST_ROUTE}`, () => {
   });
 
   it('returns 200 upon successful request', async () => {
-    // Create a ticket
-    const ticket = Ticket.build({ title: 'test ticket', price: 10 });
-    await ticket.save();
+    // Create 3 tickets
+    const ticketOne = Ticket.build({ title: 'test ticket', price: 10 });
+    await ticketOne.save();
 
-    // Make an order
-    const cookie = await mockAuthenticate();
+    const ticketTwo = Ticket.build({ title: 'test ticket two', price: 23 });
+    await ticketTwo.save();
+
+    const ticketThree = Ticket.build({ title: 'test ticket three', price: 38 });
+    await ticketThree.save();
+
+    // User #1 order 1 ticket
+    const cookieUserOne = await mockAuthenticate();
     await request(app)
       .post(TEST_ROUTE)
-      .set('Cookie', cookie)
+      .set('Cookie', cookieUserOne)
       .set('Content-Type', 'application/json')
-      .send({ ticketId: ticket.id });
+      .send({ ticketId: ticketTwo.id });
 
-    // Fetch order
+    // User #2 order 2 tickets
+    const cookieUserTwo = await mockAuthenticate();
+    await request(app)
+      .post(TEST_ROUTE)
+      .set('Cookie', cookieUserTwo)
+      .set('Content-Type', 'application/json')
+      .send({ ticketId: ticketOne.id });
+
+    await request(app)
+      .post(TEST_ROUTE)
+      .set('Cookie', cookieUserTwo)
+      .set('Content-Type', 'application/json')
+      .send({ ticketId: ticketThree.id });
+
+    // Fetch orders for User #2
     const response = await request(app)
       .get(TEST_ROUTE)
-      .set('Cookie', cookie)
+      .set('Cookie', cookieUserTwo)
       .send({});
     expect(response.status).toEqual(200);
-    expect(response.body.length).toEqual(1);
+    expect(response.body.length).toEqual(2);
   });
 });
