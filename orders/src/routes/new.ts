@@ -13,6 +13,8 @@ import {
 import { Ticket } from '../models/ticket';
 import { Order } from '../models/order';
 
+import { natsWrapper } from '../nats-wrapper';
+
 const EXPIRATION_WINDOW_SECONDS = 15 * 60; // 15 minutes
 const router = Router();
 const { ObjectId } = Types;
