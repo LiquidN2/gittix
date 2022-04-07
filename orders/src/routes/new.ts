@@ -14,6 +14,7 @@ import { Ticket } from '../models/ticket';
 import { Order } from '../models/order';
 
 import { natsWrapper } from '../nats-wrapper';
+import { OrderCreatedPublisher } from '../events/publishers/order-created-publisher';
 
 const EXPIRATION_WINDOW_SECONDS = 15 * 60; // 15 minutes
 const router = Router();
@@ -59,6 +60,16 @@ router.post(
     await order.save();
 
     // Publish event
+    await new OrderCreatedPublisher(natsWrapper.client).publish({
+      id: order.id.toString(),
+      userId: order.userId.toString(),
+      expiresAt: order.expiresAt.toString(),
+      status: order.status,
+      ticket: {
+        id: ticket.id,
+        price: ticket.price,
+      },
+    });
 
     res.status(201).send(order);
   }

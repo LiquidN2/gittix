@@ -4,6 +4,7 @@ import { mockAuthenticate } from '@hngittix/common';
 
 import { app } from '../../app';
 import { Ticket } from '../../models/ticket';
+import { natsWrapper } from '../../nats-wrapper';
 
 const TEST_ROUTE = '/api/orders';
 const { ObjectId } = Types;
@@ -82,5 +83,21 @@ describe(`POST ${TEST_ROUTE}`, () => {
     expect(response.status).toEqual(201);
   });
 
-  it.todo('emits an order created event');
+  it('emits an order created event', async () => {
+    // Create a ticket
+    const ticket = Ticket.build({ title: 'test ticket', price: 10 });
+    await ticket.save();
+
+    // Create a cookie
+    const cookie = await mockAuthenticate();
+
+    // Create an order
+    await request(app)
+      .post(TEST_ROUTE)
+      .set('Cookie', cookie)
+      .set('Content-Type', 'application/json')
+      .send({ ticketId: ticket.id });
+
+    expect(natsWrapper.client.publish).toHaveBeenCalled();
+  });
 });
