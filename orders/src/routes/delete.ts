@@ -1,18 +1,31 @@
 import { Router, Request, Response } from 'express';
-import { authenticate } from '@hngittix/common';
+import { param } from 'express-validator';
+import { Types } from 'mongoose';
+import { authenticate, NotFoundError } from '@hngittix/common';
+
+import { Order } from '../models/order';
 
 const router = Router();
+const { ObjectId } = Types;
 
 router.delete(
   '/api/orders/:id',
   authenticate,
-  (req: Request, res: Response) => {
-    // if (!req.ticket) {
-    //   throw new NotFoundError('Ticket not found');
-    // }
-    //
-    // res.status(200).send({ ticket: req.ticket });
-    res.status(200).send({});
+  param('id')
+    .trim()
+    .notEmpty()
+    .custom((input: string) => ObjectId.isValid(input))
+    .withMessage('ticket id must be valid'),
+  async (req: Request, res: Response) => {
+    const { id } = req.params;
+
+    const ticket = await Order.findOneAndDelete({
+      id,
+      userId: req.currentUser!.id,
+    });
+    if (!ticket) throw new NotFoundError('Order not found');
+
+    res.status(200).send(ticket);
   }
 );
 
