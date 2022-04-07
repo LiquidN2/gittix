@@ -4,6 +4,7 @@ import { mockAuthenticate, OrderStatus } from '@hngittix/common';
 
 import { app } from '../../app';
 import { Ticket } from '../../models/ticket';
+import { natsWrapper } from '../../nats-wrapper';
 
 const TEST_ROUTE = '/api/orders';
 const { ObjectId } = Types;
@@ -38,7 +39,7 @@ describe(`DELETE ${TEST_ROUTE}/:id`, () => {
 
     const orderId = orderRes.body.id;
 
-    // Fetch order
+    // Cancel order
     const response = await request(app)
       .del(`${TEST_ROUTE}/${orderId}`)
       .set('Cookie', cookie)
@@ -47,5 +48,27 @@ describe(`DELETE ${TEST_ROUTE}/:id`, () => {
     expect(response.body.status).toEqual(OrderStatus.Cancelled);
   });
 
-  it.todo('emits event when order is deleted');
+  it('emits event when order is deleted', async () => {
+    // Create a ticket
+    const ticket = Ticket.build({ title: 'test ticket', price: 10 });
+    await ticket.save();
+
+    // Make an order
+    const cookie = await mockAuthenticate();
+    const orderRes = await request(app)
+      .post(TEST_ROUTE)
+      .set('Cookie', cookie)
+      .set('Content-Type', 'application/json')
+      .send({ ticketId: ticket.id });
+
+    const orderId = orderRes.body.id;
+
+    // Cancel order
+    await request(app)
+      .del(`${TEST_ROUTE}/${orderId}`)
+      .set('Cookie', cookie)
+      .send({});
+
+    expect(natsWrapper.client.publish).toHaveBeenCalled();
+  });
 });

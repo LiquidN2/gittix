@@ -9,6 +9,8 @@ import {
 } from '@hngittix/common';
 
 import { Order } from '../models/order';
+import { natsWrapper } from '../nats-wrapper';
+import { OrderCancelledPublisher } from '../events/publishers/order-cancelled-publisher';
 
 const router = Router();
 const { ObjectId } = Types;
@@ -25,7 +27,7 @@ router.delete(
     const { id } = req.params;
 
     // Validate if order exists
-    const order = await Order.findById(id);
+    const order = await Order.findById(id).populate('ticket');
     if (!order) throw new NotFoundError('Order not found');
 
     // Validate if the request comes from the one who made the order
@@ -38,6 +40,16 @@ router.delete(
     await order.save();
 
     // Emits order canceled event
+    await new OrderCancelledPublisher(natsWrapper.client).publish({
+      id: order.id.toString(),
+      userId: order.userId.toString(),
+      expiresAt: order.expiresAt.toString(),
+      status: order.status,
+      ticket: {
+        id: order.ticket.id,
+        price: order.ticket.price,
+      },
+    });
 
     res.status(200).send(order);
   }
