@@ -1,14 +1,36 @@
 import { Router, Request, Response } from 'express';
+import { param } from 'express-validator';
+import { Types } from 'mongoose';
+import {
+  authenticate,
+  NotFoundError,
+  UnauthorizedRequestError,
+} from '@hngittix/common';
+
+import { Order } from '../models/order';
 
 const router = Router();
+const { ObjectId } = Types;
 
-router.get('/api/orders/:id', (req: Request, res: Response) => {
-  // if (!req.ticket) {
-  //   throw new NotFoundError('Ticket not found');
-  // }
-  //
-  // res.status(200).send({ ticket: req.ticket });
-  res.status(200).send({});
-});
+router.get(
+  '/api/orders/:id',
+  authenticate,
+  param('id')
+    .trim()
+    .notEmpty()
+    .custom((input: string) => ObjectId.isValid(input))
+    .withMessage('ticket id must be valid'),
+  async (req: Request, res: Response) => {
+    const { id } = req.params;
+
+    const order = await Order.findById(id);
+    if (!order) throw new NotFoundError('Order not found');
+    if (req.currentUser!.id !== order.userId.toString()) {
+      throw new UnauthorizedRequestError();
+    }
+
+    res.status(200).send(order);
+  }
+);
 
 export { router as showOrderRouter };
