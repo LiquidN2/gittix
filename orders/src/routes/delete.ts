@@ -34,7 +34,7 @@ router.delete(
     }
 
     // Update the order status to 'canceled'
-    order.status = OrderStatus.Canceled;
+    order.status = OrderStatus.Cancelled;
     await order.save();
 
     // Emits order canceled event

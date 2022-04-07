@@ -44,7 +44,7 @@ describe(`DELETE ${TEST_ROUTE}/:id`, () => {
       .set('Cookie', cookie)
       .send({});
     expect(response.status).toEqual(200);
-    expect(response.body.status).toEqual(OrderStatus.Canceled);
+    expect(response.body.status).toEqual(OrderStatus.Cancelled);
   });
 
   it.todo('emits event when order is deleted');
