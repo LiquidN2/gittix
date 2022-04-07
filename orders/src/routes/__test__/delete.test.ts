@@ -1,6 +1,6 @@
 import request from 'supertest';
 import { Types } from 'mongoose';
-import { mockAuthenticate } from '@hngittix/common';
+import { mockAuthenticate, OrderStatus } from '@hngittix/common';
 
 import { app } from '../../app';
 import { Ticket } from '../../models/ticket';
@@ -23,7 +23,7 @@ describe(`DELETE ${TEST_ROUTE}/:id`, () => {
     expect(response.status).toEqual(401);
   });
 
-  it('returns 200 upon successful request', async () => {
+  it('returns order status canceled upon successful request', async () => {
     // Create a ticket
     const ticket = Ticket.build({ title: 'test ticket', price: 10 });
     await ticket.save();
@@ -44,7 +44,7 @@ describe(`DELETE ${TEST_ROUTE}/:id`, () => {
       .set('Cookie', cookie)
       .send({});
     expect(response.status).toEqual(200);
-    expect(response.body).toBeDefined();
+    expect(response.body.status).toEqual(OrderStatus.Canceled);
   });
 
   it.todo('emits event when order is deleted');
