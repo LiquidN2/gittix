@@ -4,8 +4,8 @@ import mongoose from 'mongoose';
 import { checkMandatoryEnvSetup, ENV } from './check-env';
 import { app } from './app';
 import { natsWrapper } from './nats-wrapper';
-// import { TicketCreatedListener } from './events/listeners/ticket-created-listener';
-// import { TicketUpdatedListener } from './events/listeners/ticket-updated-listener';
+import { TicketCreatedListener } from './events/listeners/ticket-created-listener';
+import { TicketUpdatedListener } from './events/listeners/ticket-updated-listener';
 
 interface AppOptions {
   serviceName: string;
@@ -52,8 +52,8 @@ export const initializeServer = async (
     process.on('SIGTERM', () => natsWrapper.client.close());
 
     // Event Listeners
-    // new TicketCreatedListener(natsWrapper.client).listen();
-    // new TicketUpdatedListener(natsWrapper.client).listen();
+    new TicketCreatedListener(natsWrapper.client).listen();
+    new TicketUpdatedListener(natsWrapper.client).listen();
   } catch (e) {
     console.error('Unable to connect to NATS', e);
   }

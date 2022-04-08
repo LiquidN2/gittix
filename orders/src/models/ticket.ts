@@ -5,6 +5,7 @@ import { Order } from './order';
 
 // An interface the describes the properties required to create a ticket
 interface TicketAttrs {
+  id?: string;
   title: string;
   price: number;
 }
@@ -46,7 +47,14 @@ const ticketSchema = new Schema<TicketDoc>(
 
 // -------------------
 // STATIC METHODS
-ticketSchema.static('build', (attrs: TicketAttrs) => new Ticket(attrs));
+ticketSchema.static('build', (attrs: TicketAttrs) =>
+  attrs.id
+    ? new Ticket({
+        _id: attrs.id,
+        ...attrs,
+      })
+    : new Ticket(attrs)
+);
 
 // -------------------
 // INSTANCE METHODS
