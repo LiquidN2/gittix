@@ -1,4 +1,5 @@
 import { Schema, SchemaOptions, model, Model, Document, Types } from 'mongoose';
+import { updateIfCurrentPlugin } from 'mongoose-update-if-current';
 
 // An interface the describes the properties required to create a ticket
 interface TicketAttrs {
@@ -14,6 +15,7 @@ export interface TicketDoc extends Document {
   userId: Types.ObjectId;
   createdAt: string;
   updatedAt: string;
+  version: number;
 }
 
 // An interface that describes the properties that a Ticket Model has
@@ -25,7 +27,7 @@ interface TicketModel extends Model<TicketDoc> {
 // SCHEMA
 const schemaOptions: SchemaOptions = {
   timestamps: { createdAt: true, updatedAt: true },
-  versionKey: false,
+  // versionKey: false,
   toJSON: {
     transform(doc, ret) {
       ret.id = ret._id;
@@ -42,6 +44,11 @@ const ticketSchema = new Schema<TicketDoc>(
   },
   schemaOptions
 );
+
+// -------------------
+// PLUGINS
+ticketSchema.set('versionKey', 'version'); // rename '__v' field to 'version'
+ticketSchema.plugin(updateIfCurrentPlugin); // ensure optimistic concurrency control (incrementing the document version) when saving
 
 // -------------------
 // STATIC METHODS

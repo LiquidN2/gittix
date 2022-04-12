@@ -45,7 +45,7 @@ router.put(
     });
 
     // Response
-    res.status(200).json({ ticket });
+    res.status(200).json(ticket);
   }
 );
 
