@@ -1,4 +1,6 @@
 import { Document, Model, model, Schema, SchemaOptions, Types } from 'mongoose';
+import { updateIfCurrentPlugin } from 'mongoose-update-if-current';
+
 import { OrderStatus } from '@hngittix/common';
 
 import { Ticket, TicketDoc } from './ticket';
@@ -19,6 +21,7 @@ export interface OrderDoc extends Document {
   status: OrderStatus;
   createdAt: string;
   updatedAt: string;
+  version: number;
 }
 
 // An interface that describes the properties that an Order Model has
@@ -53,6 +56,11 @@ const orderSchema = new Schema<OrderDoc>(
   },
   schemaOptions
 );
+
+// -------------------
+// PLUGINS
+orderSchema.set('versionKey', 'version');
+orderSchema.plugin(updateIfCurrentPlugin);
 
 // -------------------
 // STATIC METHODS

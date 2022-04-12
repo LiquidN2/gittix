@@ -29,6 +29,7 @@ router.delete(
       title: ticket.title,
       price: ticket.price,
       userId: ticket.userId.toString(),
+      version: ticket.version,
     });
 
     res.status(200).send({});

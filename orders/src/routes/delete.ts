@@ -49,6 +49,7 @@ router.delete(
         id: order.ticket.id,
         price: order.ticket.price,
       },
+      version: order.version,
     });
 
     res.status(200).send(order);
