@@ -23,7 +23,7 @@ router.get(
   async (req: Request, res: Response) => {
     const { id } = req.params;
 
-    const order = await Order.findById(id);
+    const order = await Order.findById(id).populate('ticket');
     if (!order) throw new NotFoundError('Order not found');
     if (req.currentUser!.id !== order.userId.toString()) {
       throw new UnauthorizedRequestError();
