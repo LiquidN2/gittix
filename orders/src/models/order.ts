@@ -33,7 +33,7 @@ interface OrderModel extends Model<OrderDoc> {
 // SCHEMA
 const schemaOptions: SchemaOptions = {
   timestamps: { createdAt: true, updatedAt: true },
-  versionKey: false,
+  // versionKey: false,
   toJSON: {
     transform(doc, ret) {
       ret.id = ret._id;

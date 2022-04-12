@@ -1,5 +1,6 @@
 import { Schema, SchemaOptions, model, Model, Document } from 'mongoose';
-import { OrderStatus } from '@hngittix/common';
+import { updateIfCurrentPlugin } from 'mongoose-update-if-current';
+import { OrderStatus, TicketUpdatedEvent } from '@hngittix/common';
 
 import { Order } from './order';
 
@@ -12,8 +13,10 @@ interface TicketAttrs {
 
 // An interface that describes the properties that a Ticket Document has
 export interface TicketDoc extends Document {
+  // id: string;
   title: string;
   price: number;
+  version: number;
   createdAt: string;
   updatedAt: string;
   isReserved(): Promise<boolean>;
@@ -22,13 +25,17 @@ export interface TicketDoc extends Document {
 // An interface that describes the properties that a Ticket Model has
 interface TicketModel extends Model<TicketDoc> {
   build(attrs: TicketAttrs): TicketDoc;
+  findByEventData(eventData: {
+    id: string;
+    version: number;
+  }): Promise<TicketDoc | null>;
 }
 
 // ------------------
 // SCHEMA
 const schemaOptions: SchemaOptions = {
   timestamps: { createdAt: true, updatedAt: true },
-  versionKey: false,
+  // versionKey: false,
   toJSON: {
     transform(doc, ret) {
       ret.id = ret._id;
@@ -46,6 +53,11 @@ const ticketSchema = new Schema<TicketDoc>(
 );
 
 // -------------------
+// PLUGINS
+ticketSchema.set('versionKey', 'version');
+ticketSchema.plugin(updateIfCurrentPlugin);
+
+// -------------------
 // STATIC METHODS
 ticketSchema.static('build', (attrs: TicketAttrs) =>
   attrs.id
@@ -54,6 +66,14 @@ ticketSchema.static('build', (attrs: TicketAttrs) =>
         ...attrs,
       })
     : new Ticket(attrs)
+);
+
+ticketSchema.static(
+  'findByEventData',
+  async (eventData: { id: string; version: number }) => {
+    const ticket = await Ticket.findById(eventData.id);
+    return !ticket || ticket.version !== eventData.version - 1 ? null : ticket;
+  }
 );
 
 // -------------------
