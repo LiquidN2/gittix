@@ -36,22 +36,19 @@ describe('Event Listener - Ticket Updated', () => {
   };
 
   it('throws error if ticket does not exist', async () => {
-    const { listener, msg } = await setup();
+    const { listener, data, msg } = await setup();
 
-    const data: TicketUpdatedEvent['data'] = {
+    const newData: TicketUpdatedEvent['data'] = {
+      ...data,
       id: new ObjectId().toHexString(),
-      title: 'updated title',
-      price: 15,
-      userId: new ObjectId().toHexString(),
-      version: 1,
     };
 
-    await expect(listener.onMessage(data, msg)).rejects.toThrow(
+    await expect(listener.onMessage(newData, msg)).rejects.toThrow(
       'Ticket not found'
     );
   });
 
-  it('throws error if ticket version is not correct', async () => {
+  it('throws error if event is out of order', async () => {
     const { listener, data, msg } = await setup();
 
     const newData: TicketUpdatedEvent['data'] = {
@@ -72,7 +69,9 @@ describe('Event Listener - Ticket Updated', () => {
 
     // assert ticket is updated
     const updatedTicket = await Ticket.findById(data.id);
-    expect(updatedTicket!.version).toEqual(1);
+    expect(updatedTicket!.price).toEqual(data.price);
+    expect(updatedTicket!.title).toEqual(data.title);
+    expect(updatedTicket!.version).toEqual(data.version);
   });
 
   it('acknowledges the message', async () => {
