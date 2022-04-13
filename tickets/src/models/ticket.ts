@@ -6,6 +6,7 @@ interface TicketAttrs {
   title: string;
   price: number;
   userId: Types.ObjectId;
+  orderId?: Types.ObjectId | null;
 }
 
 // An interface that describes the properties that a Ticket Document has
@@ -13,6 +14,7 @@ export interface TicketDoc extends Document {
   title: string;
   price: number;
   userId: Types.ObjectId;
+  orderId: Types.ObjectId | null;
   createdAt: string;
   updatedAt: string;
   version: number;
@@ -41,6 +43,7 @@ const ticketSchema = new Schema<TicketDoc>(
     title: { type: String, required: true },
     price: { type: Number, required: true },
     userId: { type: Schema.Types.ObjectId, required: true },
+    orderId: { type: Schema.Types.ObjectId, default: null },
   },
   schemaOptions
 );
