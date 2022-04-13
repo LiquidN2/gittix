@@ -89,6 +89,16 @@ describe('Event Listener: Order Cancelled', () => {
     // call the onMessage function with event data and msg object
     await listener.onMessage(data, msg);
 
+    // asserts the event publish function has been called
     expect(natsWrapper.client.publish).toHaveBeenCalled();
+
+    // access the eventData passed to the mock publish function
+    const eventData = JSON.parse(
+      (natsWrapper.client.publish as jest.Mock).mock.calls[0][1]
+    );
+
+    // asserts the publish function is called with correct data
+    expect(eventData.id).toEqual(data.ticket.id);
+    expect(eventData.version).toEqual(data.version + 1);
   });
 });
