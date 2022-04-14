@@ -10,5 +10,7 @@ export const createTicket = async () => {
     .set('Cookie', cookie)
     .send({ title: 'test ticket', price: 10 });
 
+  jest.clearAllMocks();
+
   return { cookie, response };
 };

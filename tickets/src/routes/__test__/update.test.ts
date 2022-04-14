@@ -94,12 +94,23 @@ describe('PUT /api/tickets', () => {
     const { id: ticketId } = createTixRes.body;
 
     // Update the ticket created above
-    await request(app)
+    const response = await request(app)
       .put(`${TEST_ROUTE}/${ticketId}`)
       .set('Cookie', cookie)
       .set('Content-Type', 'application/json')
       .send({ title: 'updated ticket title', price: 20 });
 
+    const ticket = response.body;
+
+    // asserts event publisher is called
     expect(natsWrapper.client.publish).toHaveBeenCalled();
+
+    // access the data passed to the publish function
+    const eventData = JSON.parse(
+      (natsWrapper.client.publish as jest.Mock).mock.calls[0][1]
+    );
+
+    // asserts the eventData contains subset of ticket
+    expect(ticket).toMatchObject(eventData);
   });
 });

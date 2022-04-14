@@ -32,7 +32,7 @@ router.delete(
       version: ticket.version,
     });
 
-    res.status(200).send({});
+    res.status(200).send(ticket);
   }
 );
 

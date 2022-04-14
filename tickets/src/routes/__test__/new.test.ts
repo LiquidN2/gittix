@@ -79,12 +79,24 @@ describe(`POST ${TEST_ROUTE}`, () => {
   it('publishes an event upon successful request', async () => {
     // Create a new ticket
     const cookie = await mockAuthenticate();
-    await request(app)
+
+    const response = await request(app)
       .post(TEST_ROUTE)
       .set('Cookie', cookie)
       .set('Content-Type', 'application/json')
       .send({ title: 'Test ticket', price: 20 });
 
+    const ticket = response.body;
+
+    // asserts event publisher is called
     expect(natsWrapper.client.publish).toHaveBeenCalled();
+
+    // access the data passed to the publish function
+    const eventData = JSON.parse(
+      (natsWrapper.client.publish as jest.Mock).mock.calls[0][1]
+    );
+
+    // asserts the eventData contains subset of ticket
+    expect(ticket).toMatchObject(eventData);
   });
 });

@@ -34,19 +34,19 @@ router.put(
     ticket.price = price;
 
     // Save the changes
-    await ticket.save();
+    const updatedTicket = await ticket.save();
 
     // Publish event
     await new TicketUpdatedPublisher(natsWrapper.client).publish({
-      id: ticket._id,
-      title: ticket.title,
-      price: ticket.price,
-      userId: ticket.userId.toString(),
-      version: ticket.version,
+      id: updatedTicket._id,
+      title: updatedTicket.title,
+      price: updatedTicket.price,
+      userId: updatedTicket.userId.toString(),
+      version: updatedTicket.version,
     });
 
     // Response
-    res.status(200).json(ticket);
+    res.status(200).json(updatedTicket);
   }
 );
 

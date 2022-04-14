@@ -58,11 +58,22 @@ describe(`DELETE ${TEST_ROUTE}/:id`, () => {
   it('publishes an event upon successful request', async () => {
     const { response: createTixRes, cookie } = await createTicket();
 
-    await request(app)
+    const response = await request(app)
       .delete(`${TEST_ROUTE}/${createTixRes.body.id}`)
       .set('Cookie', cookie)
       .send();
 
+    const ticket = response.body;
+
+    // asserts event publisher is called
     expect(natsWrapper.client.publish).toHaveBeenCalled();
+
+    // access the data passed to the publish function
+    const eventData = JSON.parse(
+      (natsWrapper.client.publish as jest.Mock).mock.calls[0][1]
+    );
+
+    // asserts the eventData contains subset of ticket
+    expect(ticket).toMatchObject(eventData);
   });
 });
