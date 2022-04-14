@@ -26,17 +26,3 @@ spec:
                   fieldPath: metadata.name
             - name: REDIS_HOST
               value: expiration-redis-srv
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: expiration-srv
-spec:
-  type: ClusterIP
-  selector:
-    app: expiration
-  ports:
-    - name: expiration
-      protocol: TCP
-      port: 3000
-      targetPort: 3000
