@@ -24,6 +24,8 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
+            - name: REDIS_HOST
+              value: expiration-redis-srv
 ---
 apiVersion: v1
 kind: Service
