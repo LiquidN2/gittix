@@ -1,22 +1,8 @@
-import type { Express } from 'express';
-
 import { checkMandatoryEnvSetup, ENV } from './check-env';
-import { app } from './app';
 import { natsWrapper } from './nats-wrapper';
 
-interface AppOptions {
-  serviceName: string;
-}
-
-export const initializeServer = async (
-  app: Express,
-  { serviceName }: AppOptions
-) => {
+export const initializeApp = async () => {
   checkMandatoryEnvSetup([
-    ENV.JWT_SECRET, // required by authenticate middleware
-    ENV.JWT_ISSUER, // required by authenticate middleware
-    ENV.JWT_AUDIENCE, // required by authenticate middleware
-    ENV.JWT_EXPIRATION_TIME, // required by authenticate middleware
     ENV.NATS_URL, // required by NATS
     ENV.NATS_CLUSTER_ID, // required by NATS
     ENV.NATS_CLIENT_ID, // required by NATS
@@ -41,21 +27,11 @@ export const initializeServer = async (
   } catch (e) {
     console.error('Unable to connect to NATS', e);
   }
-
-  // Start the server
-  const PORT = 3000;
-  app.listen(PORT, () => {
-    console.log(
-      `✅✅✅ ${serviceName} service is listening on port ${PORT} ✅✅✅`
-    );
-  });
 };
 
-const SERVICE_NAME = 'EXPIRATION';
+const SERVICE_NAME = 'MODERATION';
 
-initializeServer(app, {
-  serviceName: SERVICE_NAME,
-}).catch(e =>
+initializeApp().catch(e =>
   console.error(
     `💥💥💥 Something went wrong with ${SERVICE_NAME} service 💥💥💥`,
     e
