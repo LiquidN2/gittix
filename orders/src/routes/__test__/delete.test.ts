@@ -61,14 +61,27 @@ describe(`DELETE ${TEST_ROUTE}/:id`, () => {
       .set('Content-Type', 'application/json')
       .send({ ticketId: ticket.id });
 
+    jest.clearAllMocks();
+
     const orderId = orderRes.body.id;
 
     // Cancel order
-    await request(app)
+    const response = await request(app)
       .del(`${TEST_ROUTE}/${orderId}`)
       .set('Cookie', cookie)
       .send({});
 
+    const order = response.body;
+
+    // assert event publisher has been called
     expect(natsWrapper.client.publish).toHaveBeenCalled();
+
+    // access the eventData
+    const eventData = JSON.parse(
+      (natsWrapper.client.publish as jest.Mock).mock.calls[0][1]
+    );
+
+    // asserts the event publisher was called with correct data
+    expect(order).toMatchObject(eventData);
   });
 });

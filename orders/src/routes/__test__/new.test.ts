@@ -92,12 +92,23 @@ describe(`POST ${TEST_ROUTE}`, () => {
     const cookie = await mockAuthenticate();
 
     // Create an order
-    await request(app)
+    const response = await request(app)
       .post(TEST_ROUTE)
       .set('Cookie', cookie)
       .set('Content-Type', 'application/json')
       .send({ ticketId: ticket.id });
 
+    const order = response.body;
+
+    // assert event publisher has been called
     expect(natsWrapper.client.publish).toHaveBeenCalled();
+
+    // access the eventData
+    const eventData = JSON.parse(
+      (natsWrapper.client.publish as jest.Mock).mock.calls[0][1]
+    );
+
+    // asserts the event publisher was called with correct data
+    expect(order).toMatchObject(eventData);
   });
 });

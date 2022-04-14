@@ -37,22 +37,22 @@ router.delete(
 
     // Update the order status to 'canceled'
     order.status = OrderStatus.Cancelled;
-    await order.save();
+    const cancelledOrder = await order.save();
 
     // Emits order canceled event
     await new OrderCancelledPublisher(natsWrapper.client).publish({
-      id: order.id.toString(),
-      userId: order.userId.toString(),
-      expiresAt: order.expiresAt.toString(),
-      status: order.status,
+      id: cancelledOrder.id.toString(),
+      userId: cancelledOrder.userId.toString(),
+      expiresAt: cancelledOrder.expiresAt.toISOString(),
+      status: cancelledOrder.status,
       ticket: {
-        id: order.ticket.id,
-        price: order.ticket.price,
+        id: cancelledOrder.ticket.id,
+        price: cancelledOrder.ticket.price,
       },
-      version: order.version,
+      version: cancelledOrder.version,
     });
 
-    res.status(200).send(order);
+    res.status(200).send(cancelledOrder);
   }
 );
 
