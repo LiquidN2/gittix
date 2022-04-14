@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: expiration-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: expiration
+  template:
+    metadata:
+      labels:
+        app: expiration
+    spec:
+      containers:
+        - name: expiration
+          image: hhnguyen255/gittix-expiration
+          env:
+            - name: COOKIE_SESSION_NAME
+              value: gittix-session
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-secret
+                  key: JWT_SECRET
+            - name: JWT_ISSUER
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-secret
+                  key: JWT_ISSUER
+            - name: JWT_AUDIENCE
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-secret
+                  key: JWT_AUDIENCE
+            - name: JWT_EXPIRATION_TIME
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-secret
+                  key: JWT_EXPIRATION_TIME
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: expiration-srv
+spec:
+  type: ClusterIP
+  selector:
+    app: expiration
+  ports:
+    - name: expiration
+      protocol: TCP
+      port: 3000
+      targetPort: 3000

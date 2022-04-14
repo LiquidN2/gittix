@@ -51,3 +51,11 @@ build:                                            # describes how the images are
         manual:
           - src: "src/**/*.ts"
             dest: .
+    - image: hhnguyen255/gittix-expiration
+      context: expiration
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: "src/**/*.ts"
+            dest: .
