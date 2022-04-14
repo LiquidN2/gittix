@@ -1,6 +1,11 @@
 import { Router, Request, Response } from 'express';
 import { body } from 'express-validator';
-import { validateRequest, authenticate, NotFoundError } from '@hngittix/common';
+import {
+  validateRequest,
+  authenticate,
+  NotFoundError,
+  BadRequestError,
+} from '@hngittix/common';
 
 import { validateTicket } from '../middlewares/validate-ticket-id';
 import { validateTicketCreator } from '../middlewares/validate-ticket-creator';
@@ -27,6 +32,11 @@ router.put(
 
     if (!ticket) {
       throw new NotFoundError('Ticket not found');
+    }
+
+    // check if ticket is reserved
+    if (ticket.orderId) {
+      throw new BadRequestError('Ticket is reserved. Update not allowed');
     }
 
     // Update the ticket

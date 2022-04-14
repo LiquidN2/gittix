@@ -1,11 +1,14 @@
 import request from 'supertest';
+import { Types } from 'mongoose';
 import { mockAuthenticate } from '@hngittix/common';
 
 import { app } from '../../app';
 import { createTicket } from '../../test/utils';
 import { natsWrapper } from '../../nats-wrapper';
+import { Ticket } from '../../models/ticket';
 
 const TEST_ROUTE = '/api/tickets';
+const { ObjectId } = Types;
 
 describe('PUT /api/tickets', () => {
   it('has a route handler listening', async () => {
@@ -57,7 +60,27 @@ describe('PUT /api/tickets', () => {
     expect(invalidPriceRes.status).toEqual(400);
   });
 
-  it('only allows ticket create to make update', async () => {
+  it('returns status 400 if ticket is reserved', async () => {
+    // Create a ticket
+    const { cookie, response: createTixRes } = await createTicket();
+    const { id: ticketId } = createTixRes.body;
+
+    // Reserve the ticket
+    const ticket = await Ticket.findById(ticketId);
+    ticket!.orderId = new ObjectId();
+    await ticket!.save();
+
+    // Update the ticket created above
+    const response = await request(app)
+      .put(`${TEST_ROUTE}/${ticketId}`)
+      .set('Cookie', cookie)
+      .set('Content-Type', 'application/json')
+      .send({ title: 'updated ticket title', price: 20 });
+
+    expect(response.status).toEqual(400);
+  });
+
+  it('returns status 401 if update request does not come from ticket creator', async () => {
     const { response: createTixRes } = await createTicket();
     const newCookie = await mockAuthenticate();
 
