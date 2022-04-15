@@ -31,7 +31,7 @@ stan.on('connect', () => {
   //   .setDeliverAllAvailable() // get all the messages of the channel from the start
   //   .setDurableName('some-durable-name'); // nats will store all events under this name
   //
-  // // the queue group only send events to one of the instances subscribe to the queue group
+  // // the queues group only send events to one of the instances subscribe to the queues group
   // const subscription = stan.subscribe(
   //   'ticket:created',
   //   'listenerQueueGroup',

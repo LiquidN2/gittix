@@ -1,37 +1,24 @@
-import { MongoMemoryServer } from 'mongodb-memory-server';
-import mongoose from 'mongoose';
+import { RedisMemoryServer } from 'redis-memory-server';
 
 jest.mock('../nats-wrapper');
 
-let mongod: MongoMemoryServer;
+let redisServer: RedisMemoryServer;
 
 beforeAll(async () => {
-  // Create a MongoDB instance
-  const mongod = await MongoMemoryServer.create();
-  const mongoUri = mongod.getUri();
+  // setup Redis server
+  redisServer = new RedisMemoryServer({
+    instance: { port: 6379 },
+  });
 
-  // Connect to MongoDB instance
-  await mongoose.connect(mongoUri);
+  await redisServer.getHost(); // defaults 127.0.0.1
+  await redisServer.getPort();
 });
 
 beforeEach(async () => {
   jest.clearAllMocks();
-
-  // Get all collections
-  const collections = await mongoose.connection.db.collections();
-
-  for (let collection of collections) {
-    // Clean the collection
-    await collection.deleteMany({});
-  }
 });
 
 afterAll(async () => {
-  // Stop MongoDB instance
-  if (mongod) {
-    await mongod.stop();
-  }
-
-  // Close the connection
-  await mongoose.connection.close();
+  // stops redis server
+  await redisServer.stop();
 });

@@ -1,11 +1,13 @@
 import { checkMandatoryEnvSetup, ENV } from './check-env';
 import { natsWrapper } from './nats-wrapper';
+import { OrderCreatedListener } from './events/listeners/order-created-listener';
 
 export const initializeApp = async () => {
   checkMandatoryEnvSetup([
     ENV.NATS_URL, // required by NATS
     ENV.NATS_CLUSTER_ID, // required by NATS
     ENV.NATS_CLIENT_ID, // required by NATS
+    ENV.REDIS_HOST,
   ]);
 
   // Connect to NATS
@@ -24,6 +26,9 @@ export const initializeApp = async () => {
     });
     process.on('SIGINT', () => natsWrapper.client.close());
     process.on('SIGTERM', () => natsWrapper.client.close());
+
+    // Event listeners
+    new OrderCreatedListener(natsWrapper.client).listen();
   } catch (e) {
     console.error('Unable to connect to NATS', e);
   }
