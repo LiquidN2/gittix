@@ -25,6 +25,10 @@ export interface OrderDoc extends Document {
 // An interface that describes the properties that an Order Model has
 interface OrderModel extends Model<OrderDoc> {
   build(attrs: OrderAttrs): OrderDoc;
+  findByEventData(eventData: {
+    id: string;
+    version: number;
+  }): Promise<OrderDoc | null>;
 }
 
 // ------------------
@@ -63,6 +67,14 @@ orderSchema.plugin(updateIfCurrentPlugin);
 // STATIC METHODS
 orderSchema.static('build', (attrs: OrderAttrs) =>
   attrs.id ? new Order({ ...attrs, _id: attrs.id }) : new Order(attrs)
+);
+
+orderSchema.static(
+  'findByEventData',
+  async (eventData: { id: string; version: number }) => {
+    const order = await Order.findById(eventData.id);
+    return !order || order.version !== eventData.version - 1 ? null : order;
+  }
 );
 
 // -------------------
