@@ -11,30 +11,27 @@ export const initializeApp = async () => {
   ]);
 
   // Connect to NATS
-  try {
-    await natsWrapper.connect(
-      process.env.NATS_CLUSTER_ID!,
-      process.env.NATS_CLIENT_ID!,
-      process.env.NATS_URL!
-    );
-    console.log('🤝🤝🤝 Connected to NATS 🤝🤝🤝');
 
-    // CLose NATS connection upon signal interruption and termination
-    natsWrapper.client.on('close', () => {
-      console.log('NATS connection closed!');
-      process.exit();
-    });
-    process.on('SIGINT', () => natsWrapper.client.close());
-    process.on('SIGTERM', () => natsWrapper.client.close());
+  await natsWrapper.connect(
+    process.env.NATS_CLUSTER_ID!,
+    process.env.NATS_CLIENT_ID!,
+    process.env.NATS_URL!
+  );
+  console.log('🤝🤝🤝 Connected to NATS 🤝🤝🤝');
 
-    // Event listeners
-    new OrderCreatedListener(natsWrapper.client).listen();
-  } catch (e) {
-    console.error('Unable to connect to NATS', e);
-  }
+  // CLose NATS connection upon signal interruption and termination
+  natsWrapper.client.on('close', () => {
+    console.log('NATS connection closed!');
+    process.exit();
+  });
+  process.on('SIGINT', () => natsWrapper.client.close());
+  process.on('SIGTERM', () => natsWrapper.client.close());
+
+  // Event listeners
+  new OrderCreatedListener(natsWrapper.client).listen();
 };
 
-const SERVICE_NAME = 'MODERATION';
+const SERVICE_NAME = 'EXPIRATION';
 
 initializeApp()
   .then(() =>
