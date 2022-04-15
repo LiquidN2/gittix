@@ -5,6 +5,9 @@ import { checkMandatoryEnvSetup, ENV } from './check-env';
 import { app } from './app';
 import { natsWrapper } from './nats-wrapper';
 
+import { OrderCreatedListener } from './events/listeners/order-created-listener';
+import { OrderCancelledListener } from './events/listeners/order-cancelled-listener';
+
 interface AppOptions {
   serviceName: string;
 }
@@ -50,6 +53,8 @@ export const initializeServer = async (
     process.on('SIGTERM', () => natsWrapper.client.close());
 
     // Event listeners
+    new OrderCreatedListener(natsWrapper.client).listen();
+    new OrderCancelledListener(natsWrapper.client).listen();
   } catch (e) {
     console.error('Unable to connect to NATS', e);
   }
