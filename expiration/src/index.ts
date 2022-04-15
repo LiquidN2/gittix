@@ -36,9 +36,13 @@ export const initializeApp = async () => {
 
 const SERVICE_NAME = 'MODERATION';
 
-initializeApp().catch(e =>
-  console.error(
-    `💥💥💥 Something went wrong with ${SERVICE_NAME} service 💥💥💥`,
-    e
+initializeApp()
+  .then(() =>
+    console.log(`✅✅✅ ${SERVICE_NAME} service is listening for events ✅✅✅`)
   )
-);
+  .catch(e =>
+    console.error(
+      `💥💥💥 Something went wrong with ${SERVICE_NAME} service 💥💥💥`,
+      e
+    )
+  );

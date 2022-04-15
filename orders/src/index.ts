@@ -6,6 +6,7 @@ import { app } from './app';
 import { natsWrapper } from './nats-wrapper';
 import { TicketCreatedListener } from './events/listeners/ticket-created-listener';
 import { TicketUpdatedListener } from './events/listeners/ticket-updated-listener';
+import { ExpirationCompleteListener } from './events/listeners/expiration-complete-listener';
 
 interface AppOptions {
   serviceName: string;
@@ -54,6 +55,7 @@ export const initializeServer = async (
     // Event Listeners
     new TicketCreatedListener(natsWrapper.client).listen();
     new TicketUpdatedListener(natsWrapper.client).listen();
+    new ExpirationCompleteListener(natsWrapper.client).listen();
   } catch (e) {
     console.error('Unable to connect to NATS', e);
   }

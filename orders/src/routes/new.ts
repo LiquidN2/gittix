@@ -16,7 +16,7 @@ import { Order } from '../models/order';
 import { natsWrapper } from '../nats-wrapper';
 import { OrderCreatedPublisher } from '../events/publishers/order-created-publisher';
 
-const EXPIRATION_WINDOW_SECONDS = 1 * 60; // 15 minutes
+const EXPIRATION_WINDOW_SECONDS = 5; // 15 minutes
 const router = Router();
 const { ObjectId } = Types;
 
