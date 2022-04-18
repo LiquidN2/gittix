@@ -51,7 +51,7 @@ spec:
             - name: STRIPE_SECRET_KEY
               valueFrom:
                 secretKeyRef:
-                  name: stripeTs-secret
+                  name: stripe-secret
                   key: STRIPE_SECRET_KEY
 ---
 apiVersion: v1
