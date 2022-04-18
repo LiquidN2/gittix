@@ -48,6 +48,11 @@ spec:
                 secretKeyRef:
                   name: jwt-secret
                   key: JWT_EXPIRATION_TIME
+            - name: STRIPE_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: stripeTs-secret
+                  key: STRIPE_SECRET_KEY
 ---
 apiVersion: v1
 kind: Service

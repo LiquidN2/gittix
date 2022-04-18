@@ -11,7 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@hngittix/common": "^1.0.27",
+    "@hngittix/common": "^1.0.28",
     "@types/cookie-session": "^2.0.44",
     "@types/express": "^4.17.13",
     "cookie-session": "^2.0.0",
@@ -31,7 +31,7 @@
     "@types/supertest": "^2.0.12",
     "dotenv": "^16.0.0",
     "jest": "^27.5.1",
-    "mongodb-memory-server": "^8.4.2",
+    "mongodb-memory-server": "^8.5.0",
     "supertest": "^6.2.2",
     "ts-jest": "^27.1.4"
   }

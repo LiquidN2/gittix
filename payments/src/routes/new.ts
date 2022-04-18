@@ -10,7 +10,12 @@ import {
   UnauthorizedRequestError,
   validateRequest,
 } from '@hngittix/common';
+
+import { stripe } from '../stripe';
 import { Order } from '../models/order';
+import { Payment } from '../models/payment';
+import { natsWrapper } from '../nats-wrapper';
+import { PaymentCreatedPublisher } from '../events/publishers/payment-created-publisher';
 
 const { ObjectId } = Types;
 const router = Router();
@@ -42,7 +47,34 @@ router.post(
       throw new BadRequestError('Order is cancelled');
     }
 
-    res.send({ success: true });
+    // Create a Stripe charge
+    const charge = await stripe.charges.create({
+      currency: 'usd',
+      amount: order.price * 100, // convert to cents
+      source: token,
+      metadata: {
+        orderId: order.id.toString(),
+        userId: order.userId.toString(),
+      },
+    });
+
+    if (!charge) throw new Error('Unable to create Stripe charge');
+
+    // Create & save a payment record
+    const payment = Payment.build({
+      order: order.id,
+      stripeChargeId: charge.id,
+    });
+    await payment.save();
+
+    // Emits Payment Created event
+    await new PaymentCreatedPublisher(natsWrapper.client).publish({
+      id: payment.id.toString(),
+      orderId: payment.order.toString(),
+      stripeChargeId: payment.stripeChargeId,
+    });
+
+    res.status(201).send({ id: payment.id });
   }
 );
 
