@@ -1,5 +1,5 @@
 import type { NextPage, GetServerSideProps } from 'next';
-import { buildClient } from '../api/build-client';
+// import { buildClient } from '../api/build-client';
 
 interface HomePageProps {
   currentUser: Record<string, any> | null;
@@ -15,6 +15,14 @@ const Home: NextPage<HomePageProps> = ({ currentUser }) => {
 };
 
 export const getServerSideProps: GetServerSideProps = async context => {
+  // try {
+  //   const client = buildClient(context.req);
+  //   const response = await client.get('/api/users/currentuser');
+  //   console.log(response);
+  // } catch (e) {
+  //   console.error(e);
+  // }
+
   return { props: {} };
 };
 

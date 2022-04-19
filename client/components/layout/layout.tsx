@@ -1,7 +1,7 @@
-import { FC } from 'react';
+import { FC, ReactNode } from 'react';
 import Header from '../header/header';
 
-const Layout: FC = ({ children }) => {
+const Layout: FC<{ children: ReactNode }> = ({ children }) => {
   return (
     <div>
       <Header />

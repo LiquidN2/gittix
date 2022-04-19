@@ -27,15 +27,19 @@ MyApp.getInitialProps = async (appContext: AppContext) => {
     pageProps = {},
     currentUser = null;
 
-  try {
-    const client = buildClient(appContext.ctx.req);
-    const { data } = await client.get('/api/users/currentuser');
-    currentUser = data.currentUser;
-    appProps = await App.getInitialProps(appContext);
-    if (appContext.Component.getInitialProps) {
-      pageProps = await appContext.Component.getInitialProps(appContext.ctx);
+  if (appContext.ctx.req) {
+    try {
+      const client = buildClient(appContext.ctx.req);
+      const { data } = await client.get('/api/users/currentuser');
+      currentUser = data.currentUser;
+      appProps = await App.getInitialProps(appContext);
+      if (appContext.Component.getInitialProps) {
+        pageProps = await appContext.Component.getInitialProps(appContext.ctx);
+      }
+    } catch (e) {
+      console.error('💥💥💥 Unauthorized request 💥💥💥');
     }
-  } catch (e) {}
+  }
 
   return { ...appProps, pageProps, currentUser };
 };
