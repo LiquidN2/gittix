@@ -21,15 +21,16 @@ export class OrderCancelledListener extends Listener<OrderCancelledEvent> {
 
     // Set orderId to null
     ticket.orderId = null;
-    await ticket.save();
+    const updatedTicket = await ticket.save();
 
     // Emits ticket update event
     await new TicketUpdatedPublisher(this.client).publish({
-      id: ticket.id,
-      title: ticket.title,
-      price: ticket.price,
-      userId: ticket.userId.toString(),
-      version: ticket.version,
+      id: updatedTicket.id,
+      title: updatedTicket.title,
+      price: updatedTicket.price,
+      userId: updatedTicket.userId.toString(),
+      version: updatedTicket.version,
+      orderId: updatedTicket.orderId?.toString() || null,
     });
 
     // Acknowledge the event

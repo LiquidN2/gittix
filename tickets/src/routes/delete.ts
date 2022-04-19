@@ -30,6 +30,7 @@ router.delete(
       price: ticket.price,
       userId: ticket.userId.toString(),
       version: ticket.version,
+      orderId: ticket.orderId?.toString() || null,
     });
 
     res.status(200).send(ticket);

@@ -26,15 +26,16 @@ export class OrderCreatedListener extends Listener<OrderCreatedEvent> {
 
     // save the ticket with order id
     ticket.orderId = new ObjectId(orderId);
-    await ticket.save();
+    const updatedTicket = await ticket.save();
 
     // emits ticket updated event
     await new TicketUpdatedPublisher(this.client).publish({
-      id: ticket._id,
-      title: ticket.title,
-      price: ticket.price,
-      userId: ticket.userId.toString(),
-      version: ticket.version,
+      id: updatedTicket._id,
+      title: updatedTicket.title,
+      price: updatedTicket.price,
+      userId: updatedTicket.userId.toString(),
+      version: updatedTicket.version,
+      orderId: updatedTicket.orderId?.toString() || null,
     });
 
     // acknowledges the message

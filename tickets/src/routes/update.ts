@@ -53,6 +53,7 @@ router.put(
       price: updatedTicket.price,
       userId: updatedTicket.userId.toString(),
       version: updatedTicket.version,
+      orderId: updatedTicket.orderId?.toString() || null,
     });
 
     // Response
