@@ -3,6 +3,7 @@ import { param } from 'express-validator';
 import { Types } from 'mongoose';
 import {
   authenticate,
+  BadRequestError,
   NotFoundError,
   OrderStatus,
   UnauthorizedRequestError,
@@ -33,6 +34,11 @@ router.delete(
     // Validate if the request comes from the one who made the order
     if (order.userId.toString() !== req.currentUser!.id) {
       throw new UnauthorizedRequestError();
+    }
+
+    // Validate if the order is already complete
+    if (order.status === OrderStatus.Complete) {
+      throw new BadRequestError('Cannot cancel an order that was paid for');
     }
 
     // Update the order status to 'canceled'
