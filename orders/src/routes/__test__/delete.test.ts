@@ -4,6 +4,7 @@ import { mockAuthenticate, OrderStatus } from '@hngittix/common';
 
 import { app } from '../../app';
 import { Ticket } from '../../models/ticket';
+import { Order } from '../../models/order';
 import { natsWrapper } from '../../nats-wrapper';
 
 const TEST_ROUTE = '/api/orders';
@@ -24,7 +25,35 @@ describe(`DELETE ${TEST_ROUTE}/:id`, () => {
     expect(response.status).toEqual(401);
   });
 
-  it('returns order status canceled upon successful request', async () => {
+  it('returns status 400 if order is already complete', async () => {
+    // Create a ticket
+    const ticket = Ticket.build({ title: 'test ticket', price: 10 });
+    await ticket.save();
+
+    // Make an order
+    const cookie = await mockAuthenticate();
+    const orderRes = await request(app)
+      .post(TEST_ROUTE)
+      .set('Cookie', cookie)
+      .set('Content-Type', 'application/json')
+      .send({ ticketId: ticket.id });
+
+    const orderId = orderRes.body.id;
+
+    // Changes order status to complete
+    const order = await Order.findById(orderId);
+    order!.status = OrderStatus.Complete;
+    const completedOrder = await order!.save();
+
+    // Request order cancellation
+    const response = await request(app)
+      .del(`${TEST_ROUTE}/${orderId}`)
+      .set('Cookie', cookie)
+      .send({});
+    expect(response.status).toEqual(400);
+  });
+
+  it('returns order with status canceled upon successful request', async () => {
     // Create a ticket
     const ticket = Ticket.build({ title: 'test ticket', price: 10 });
     await ticket.save();

@@ -39,14 +39,26 @@ describe('Event Listener: Expiration Complete', () => {
       ack: jest.fn(),
     };
 
-    return { listener, data, msg };
+    return { listener, data, msg, order };
   };
+
   it('throws an error if order id is not valid', async () => {
     const { listener, msg } = await setup();
 
     await expect(
       listener.onMessage({ orderId: new ObjectId().toString() }, msg)
     ).rejects.toThrow('Order not found');
+  });
+
+  it('does not cancel order if order is already complete', async () => {
+    const { listener, data, msg, order } = await setup();
+
+    const testOrder = await Order.findById(order.id);
+    testOrder!.status = OrderStatus.Complete;
+    const completeOrder = await testOrder!.save();
+
+    await listener.onMessage(data, msg);
+    expect(completeOrder.status).not.toEqual(OrderStatus.Cancelled);
   });
 
   it('changes the order status to "cancelled"', async () => {

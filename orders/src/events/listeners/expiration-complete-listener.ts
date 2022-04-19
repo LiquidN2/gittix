@@ -19,23 +19,27 @@ export class ExpirationCompleteListener extends Listener<ExpirationCompleteEvent
     const order = await Order.findById(eventData.orderId).populate('ticket');
     if (!order) throw new Error('Order not found');
 
-    // Cancel the order
-    order.status = OrderStatus.Cancelled;
-    const cancelledOrder = await order.save();
+    // Cancel the order if its status is created or awaiting order
+    if (
+      order.status === OrderStatus.Created ||
+      order.status === OrderStatus.AwaitingPayment
+    ) {
+      order.status = OrderStatus.Cancelled;
+      const cancelledOrder = await order.save();
 
-    // Emits order cancel event
-    await new OrderCancelledPublisher(this.client).publish({
-      id: cancelledOrder.id.toString(),
-      userId: cancelledOrder.userId.toString(),
-      expiresAt: cancelledOrder.expiresAt.toISOString(),
-      status: cancelledOrder.status,
-      ticket: {
-        id: cancelledOrder.ticket.id,
-        price: cancelledOrder.ticket.price,
-      },
-      version: cancelledOrder.version,
-    });
-
+      // Emits order cancel event
+      await new OrderCancelledPublisher(this.client).publish({
+        id: cancelledOrder.id.toString(),
+        userId: cancelledOrder.userId.toString(),
+        expiresAt: cancelledOrder.expiresAt.toISOString(),
+        status: cancelledOrder.status,
+        ticket: {
+          id: cancelledOrder.ticket.id,
+          price: cancelledOrder.ticket.price,
+        },
+        version: cancelledOrder.version,
+      });
+    }
     // acknowledges message
     msg.ack();
   }

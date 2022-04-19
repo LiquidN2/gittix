@@ -24,6 +24,7 @@ describe('Event Listener - Ticket Updated', () => {
       price: 15,
       userId: new ObjectId().toHexString(),
       version: 1,
+      orderId: null,
     };
 
     // create fake message obj
