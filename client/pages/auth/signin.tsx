@@ -1,14 +1,20 @@
 import { NextPage } from 'next';
+import Head from 'next/head';
+
+import { PageContainer } from '../../components/pages/auth/signin.styles';
 import FormAuth from '../../components/forms/form-auth';
-import { useRouter } from 'next/router';
-import { useEffect } from 'react';
 
-interface SignInPageProps {
-  currentUser: Record<string, any> | null;
-}
-
-const SignIn: NextPage<SignInPageProps> = ({ currentUser }) => {
-  return <FormAuth type="signin" />;
+const SignIn: NextPage = () => {
+  return (
+    <>
+      <Head>
+        <title>🎫 Gittix | Sign In</title>
+      </Head>
+      <PageContainer className="text-center">
+        <FormAuth type="signin" />
+      </PageContainer>
+    </>
+  );
 };
 
 export default SignIn;

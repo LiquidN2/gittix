@@ -1,9 +1,9 @@
-import axios, { AxiosRequestHeaders } from 'axios';
+import axios, { AxiosInstance, AxiosRequestHeaders } from 'axios';
 
 // The base url here is for nextjs service to make request to ingress-nginx service
 // The url format is http://servicename.namespace.svc.cluster.local
 // This function is server side
-export const buildClient = (req: any) => {
+export const buildClient = (req: any): AxiosInstance => {
   const headers = req.headers as AxiosRequestHeaders;
 
   return axios.create({

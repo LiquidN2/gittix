@@ -1,9 +1,9 @@
 import { FC, FormEventHandler, useState, useContext, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import Head from 'next/head';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 
+import { FormAuthContainer } from './form-auth.styles';
 import { useRequest } from '../../hooks/use-request';
 import { UserContext } from '../../contexts/user-context';
 
@@ -21,8 +21,8 @@ const FormAuth: FC<FormAuthProps> = ({ type }) => {
     router.push('/').catch(e => console.log(e));
   }, [user]);
 
-  const [email, setEmail] = useState<string>('test@test.com');
-  const [password, setPassword] = useState<string>('test');
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
   const [passwordConfirm, setPasswordConfirm] = useState<string>('');
 
   const { doRequest, errors } = useRequest(
@@ -48,56 +48,61 @@ const FormAuth: FC<FormAuthProps> = ({ type }) => {
   }
 
   return (
-    <>
-      <Head>
-        <title>Gittix</title>
-      </Head>
+    <FormAuthContainer>
       <Form onSubmit={onSubmit}>
-        {type === 'signup' && <h1>Sign Up A New Account</h1>}
-        {type === 'signin' && <h1>Sign In</h1>}
+        <h1 className="h3 mb-3 fw-normal">
+          {type === 'signin' ? 'Please sign in' : 'Register a new account'}
+        </h1>
 
-        <Form.Group className="mb-3" controlId="email">
-          <Form.Label>Email Address</Form.Label>
+        <Form.Group className="form-floating" controlId="email">
           <Form.Control
             type="email"
             value={email}
             onChange={e => setEmail(e.currentTarget.value)}
             required={true}
+            placeholder="Email Address"
           />
+          <Form.Label>Email Address</Form.Label>
         </Form.Group>
 
-        <Form.Group className="mb-3" controlId="password">
-          <Form.Label>Password</Form.Label>
+        <Form.Group className="form-floating" controlId={`${type}-password`}>
           <Form.Control
             type="password"
             value={password}
             onChange={e => setPassword(e.currentTarget.value)}
             required={true}
+            placeholder="Password"
             // pattern=".{4,20}"
             // title="4 to 20 characters"
           />
+          <Form.Label>Password</Form.Label>
         </Form.Group>
 
         {type === 'signup' && (
-          <Form.Group className="mb-3" controlId="passwordConfirm">
-            <Form.Label>Confirm Password</Form.Label>
+          <Form.Group
+            className="mb-3 form-floating"
+            controlId="password-confirm"
+          >
             <Form.Control
               type="password"
               value={passwordConfirm}
               onChange={e => setPasswordConfirm(e.currentTarget.value)}
               required={true}
+              placeholder="Confirm Password"
               // pattern=".{4,20}"
               // title="4 to 20 characters"
             />
+            <Form.Label>Confirm Password</Form.Label>
           </Form.Group>
         )}
 
-        {type === 'signin' && <Button type="submit">Sign In</Button>}
-        {type === 'signup' && <Button type="submit">Sign Up</Button>}
+        <Button type="submit" className="w-100 btn btn-lg btn-primary">
+          {type === 'signin' ? 'Login' : 'Sign Up'}
+        </Button>
 
         {errors}
       </Form>
-    </>
+    </FormAuthContainer>
   );
 };
 

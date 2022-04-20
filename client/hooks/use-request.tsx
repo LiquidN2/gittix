@@ -9,7 +9,7 @@ interface Error {
 
 export const useRequest = (
   url: string,
-  method: 'get' | 'post' | 'patch' | 'delete',
+  method: 'get' | 'post' | 'patch' | 'put' | 'delete',
   body: Record<string, any>,
   successCallback?: Function
 ) => {
