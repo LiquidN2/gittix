@@ -1,11 +1,10 @@
-import { FC, FormEventHandler, useState, useContext, useEffect } from 'react';
+import { FC, FormEventHandler, useState } from 'react';
 import { useRouter } from 'next/router';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 
 import { FormAuthContainer } from './form-auth.styles';
 import { useRequest } from '../../hooks/use-request';
-import { UserContext } from '../../contexts/user-context';
 
 interface FormAuthProps {
   type: 'signup' | 'signin';
@@ -13,13 +12,6 @@ interface FormAuthProps {
 
 const FormAuth: FC<FormAuthProps> = ({ type }) => {
   const router = useRouter();
-  const user = useContext(UserContext);
-
-  // Redirect to home page if authenticated
-  useEffect(() => {
-    if (!user) return;
-    router.push('/').catch(e => console.log(e));
-  }, [user]);
 
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
@@ -42,10 +34,6 @@ const FormAuth: FC<FormAuthProps> = ({ type }) => {
     if (type === 'signup' && password !== passwordConfirm) return;
     await doRequest();
   };
-
-  if (user) {
-    return <div>Redirecting...</div>;
-  }
 
   return (
     <FormAuthContainer>

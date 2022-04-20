@@ -3,6 +3,7 @@ import Head from 'next/head';
 
 import FormAuth from '../../components/forms/form-auth';
 import { PageContainer } from '../../components/pages/auth/signup.styles';
+import { withUnauthorizedAccess } from '../../components/with-unauthorized-access/with-unauthorized-access';
 
 const SignUp: NextPage = () => {
   return (
@@ -17,4 +18,4 @@ const SignUp: NextPage = () => {
   );
 };
 
-export default SignUp;
+export default withUnauthorizedAccess(SignUp);
