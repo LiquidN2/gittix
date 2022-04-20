@@ -2,6 +2,7 @@ import { NextPage } from 'next';
 import Head from 'next/head';
 
 import FormTicket from '../../components/forms/form-ticket';
+import { withPrivateAccess } from '../../components/with-private-access/with-private-acess';
 
 const CreateNewTicket: NextPage = () => {
   return (
@@ -14,4 +15,4 @@ const CreateNewTicket: NextPage = () => {
   );
 };
 
-export default CreateNewTicket;
+export default withPrivateAccess(CreateNewTicket);

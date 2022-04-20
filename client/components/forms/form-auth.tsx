@@ -53,7 +53,10 @@ const FormAuth: FC<FormAuthProps> = ({ type }) => {
           <Form.Label>Email Address</Form.Label>
         </Form.Group>
 
-        <Form.Group className="form-floating" controlId={`${type}-password`}>
+        <Form.Group
+          className={`${type === 'signin' ? 'mb-3' : ''} form-floating`}
+          controlId={`${type}-password`}
+        >
           <Form.Control
             type="password"
             value={password}

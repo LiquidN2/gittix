@@ -6,6 +6,10 @@ export const FormAuthContainer = styled.div`
   padding: 15px;
   margin: auto;
 
+  .form-floating:focus-within {
+    z-index: 2;
+  }
+
   input[type='email'] {
     margin-bottom: -1px;
     border-bottom-right-radius: 0;
