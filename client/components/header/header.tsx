@@ -1,7 +1,13 @@
 import { FC, MouseEventHandler, useContext } from 'react';
-import axios from 'axios';
 import Link from 'next/link';
+import Nav from 'react-bootstrap/Nav';
+import Navbar from 'react-bootstrap/Navbar';
 import Button from 'react-bootstrap/Button';
+import Container from 'react-bootstrap/Container';
+
+import NavLinkText from '../navigation/nav-link-text';
+import NavLinkButton from '../navigation/nav-link-button';
+import NavButtonGroup from '../navigation/nav-button-group';
 
 import { UserContext } from '../../contexts/user-context';
 import { useRequest } from '../../hooks/use-request';
@@ -33,28 +39,41 @@ const Header: FC = () => {
   };
 
   return (
-    <header className="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
-      <Link href="/">
-        <a
-          className="flex-grow-1 text-muted fs-4"
-          style={{ textDecoration: 'none' }}
-        >
-          🎫 Gittix
-        </a>
-      </Link>
-
-      {user && <Button onClick={signOut}>Sign Out</Button>}
-
-      {links.map((link, index) =>
-        !link.isHidden ? (
-          <Link key={index} href={link.url}>
-            <Button className={index === links.length - 1 ? '' : 'me-2'}>
-              {link.name}
-            </Button>
-          </Link>
-        ) : null
-      )}
-    </header>
+    <Navbar bg="light" expand="lg">
+      <Container>
+        <Link href="/">
+          <Navbar.Brand>Gittix 🎫</Navbar.Brand>
+        </Link>
+        <Navbar.Toggle aria-controls="basic-navbar-nav" />
+        <Navbar.Collapse id="basic-navbar-nav">
+          <Nav className="me-auto">
+            <NavLinkText href="/" name="Home" />
+            <NavLinkText href="/tickets" name="Tickets" />
+          </Nav>
+          <NavButtonGroup>
+            {!user && (
+              <NavLinkButton
+                href="/auth/signin"
+                name="Login"
+                variant="outline-primary"
+              />
+            )}
+            {!user && (
+              <NavLinkButton
+                href="/auth/signup"
+                name="Sign Up"
+                variant="primary"
+              />
+            )}
+            {user && (
+              <Button onClick={signOut} variant="outline-primary">
+                Sign Out
+              </Button>
+            )}
+          </NavButtonGroup>
+        </Navbar.Collapse>
+      </Container>
+    </Navbar>
   );
 };
 
