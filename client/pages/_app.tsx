@@ -2,7 +2,6 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import '../styles/main.scss';
 
 import App, { AppProps, AppContext } from 'next/app';
-import axios, { AxiosInstance } from 'axios';
 
 import Layout from '../components/layout/layout';
 import { buildClient } from '../api/build-client';
@@ -16,7 +15,7 @@ const MyApp = ({ Component, pageProps, currentUser = null }: MyAppProps) => {
   return (
     <UserContext.Provider value={currentUser}>
       <Layout>
-        <Component {...pageProps} currentUser={currentUser} />
+        <Component currentUser={currentUser} {...pageProps} />
       </Layout>
     </UserContext.Provider>
   );
@@ -32,20 +31,20 @@ MyApp.getInitialProps = async (appContext: AppContext) => {
     currentUser = null;
 
   try {
-    // appContetx.ctx.req only available on the server
-    // if on the server build a custom axios client
-    // else use a regular axios client for browser
-    const client: AxiosInstance = appContext.ctx.req
-      ? buildClient(appContext.ctx.req)
-      : axios;
+    const client = buildClient(appContext);
+
+    // fetch current user
     const { data } = await client.get('/api/users/currentuser');
+
     currentUser = data.currentUser;
+
     appProps = await App.getInitialProps(appContext);
+
     if (appContext.Component.getInitialProps) {
       pageProps = await appContext.Component.getInitialProps(appContext.ctx);
     }
   } catch (e) {
-    console.error('💥💥💥 Unauthorized request 💥💥💥');
+    console.error('🥷🙅‍♂️ Unauthenticated request 🙅‍♂️🥷');
   }
 
   return { ...appProps, pageProps, currentUser };
