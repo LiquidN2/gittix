@@ -2,6 +2,7 @@ import { FC, FormEventHandler, useState } from 'react';
 import { useRouter } from 'next/router';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
+import Spinner from 'react-bootstrap/Spinner';
 
 import { FormAuthContainer } from './form-auth.styles';
 import { useRequest } from '../../hooks/use-request';
@@ -17,7 +18,7 @@ const FormAuth: FC<FormAuthProps> = ({ type }) => {
   const [password, setPassword] = useState<string>('');
   const [passwordConfirm, setPasswordConfirm] = useState<string>('');
 
-  const { doRequest, errors } = useRequest(
+  const { doRequest, errors, isLoading, data } = useRequest(
     `/api/users/${type}`,
     'post',
     {
@@ -31,9 +32,19 @@ const FormAuth: FC<FormAuthProps> = ({ type }) => {
 
   const onSubmit: FormEventHandler = async e => {
     e.preventDefault();
+    e.stopPropagation();
+
     if (type === 'signup' && password !== passwordConfirm) return;
+
     await doRequest();
   };
+
+  if (isLoading && !errors && !data)
+    return (
+      <FormAuthContainer>
+        <Spinner animation="border" variant="primary" />
+      </FormAuthContainer>
+    );
 
   return (
     <FormAuthContainer>

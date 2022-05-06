@@ -1,6 +1,5 @@
 import { NextPage } from 'next';
 import Head from 'next/head';
-import Container from 'react-bootstrap/Container';
 
 import FormTicket from '../../components/forms/form-ticket';
 import { withPrivateAccess } from '../../components/with-private-access/with-private-acess';

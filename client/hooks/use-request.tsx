@@ -33,11 +33,9 @@ export const useRequest = (
       setErrors(
         e.response.data.errors.length !== 0 ? (
           <Alert variant="danger">
-            <ul className="my-0">
-              {e.response.data.errors.map((error: Error, index: number) => (
-                <li key={index}>{error.message}</li>
-              ))}
-            </ul>
+            {e.response.data.errors.map((error: Error, index: number) => (
+              <div key={index}>{error.message}</div>
+            ))}
           </Alert>
         ) : null
       );

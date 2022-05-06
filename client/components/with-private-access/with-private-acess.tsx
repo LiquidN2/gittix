@@ -8,7 +8,7 @@ import { UserContext } from '../../contexts/user-context';
 export function withPrivateAccess<P>(
   WrappedComponent: NextPage<P>
 ): NextPage<P> {
-  return function (props) {
+  return function Component(props) {
     const router = useRouter();
     const user = useContext(UserContext);
 
@@ -17,7 +17,8 @@ export function withPrivateAccess<P>(
       router.push('/auth/signin').catch(e => console.error(e));
     }, []);
 
-    if (!user) return <div>Unauthorized access. Redirecting...</div>;
+    if (!user)
+      return <div>Unauthorized access. Redirecting to login page...</div>;
 
     return <WrappedComponent {...props} />;
   };
