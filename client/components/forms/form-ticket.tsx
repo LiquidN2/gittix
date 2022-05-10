@@ -2,6 +2,7 @@ import { FC, FormEventHandler, useState, useEffect } from 'react';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import Alert from 'react-bootstrap/Alert';
+import Spinner from 'react-bootstrap/Spinner';
 
 import { useRequest } from '../../hooks/use-request';
 import { FormTicketContainer } from './form-ticket.styles';
@@ -25,19 +26,20 @@ const FormTicket: FC<FormTicketProps> = props => {
     isLoading: isCreatingTicket,
     data: ticketCreatedData,
   } = useRequest('/api/tickets', 'post', {
-    title: title.trim(),
-    price: Number(price),
+    title,
+    price,
   });
 
   // Update ticket request hook
-  const { doRequest: updateTicket } = useRequest(
-    `/api/tickets/${props.id}`,
-    'put',
-    {
-      title: title.trim(),
-      price: Number(price),
-    }
-  );
+  const {
+    doRequest: updateTicket,
+    errors: updateTicketErrors,
+    isLoading: isUpdatingTicket,
+    data: ticketUpdatedData,
+  } = useRequest(`/api/tickets/${props.id}`, 'put', {
+    title,
+    price,
+  });
 
   useEffect(() => {
     if (props.title) setTitle(props.title);
@@ -50,8 +52,21 @@ const FormTicket: FC<FormTicketProps> = props => {
     setTimeout(() => setIsDisplayedResult(false), 3000);
   }, [isDisplayedResult]);
 
+  const formatInput = () => {
+    setTitle(title.trim());
+
+    const formatedPrice = Number(price).toFixed(2);
+    setPrice(formatedPrice);
+  };
+
+  const onBlur: FormEventHandler = () => {
+    formatInput();
+  };
+
   const onSubmit: FormEventHandler = async e => {
     e.preventDefault();
+
+    formatInput();
 
     // Update ticket if ticket id is provided
     // else create new ticket
@@ -63,13 +78,26 @@ const FormTicket: FC<FormTicketProps> = props => {
 
     // Display submission result
     setIsDisplayedResult(true);
+
+    // Clear form input
     setPrice(0);
     setTitle('');
   };
 
+  if (
+    (isCreatingTicket && !createTicketErrors && !ticketCreatedData) ||
+    (isUpdatingTicket && !updateTicketErrors && !ticketUpdatedData)
+  ) {
+    return (
+      <FormTicketContainer>
+        <Spinner animation="border" variant="primary" />
+      </FormTicketContainer>
+    );
+  }
+
   return (
     <FormTicketContainer>
-      <Form onSubmit={onSubmit}>
+      <Form onSubmit={onSubmit} onBlur={onBlur}>
         <h1 className="h3 mb-3 fw-normal">
           {props.id
             ? 'Provide updated details of your ticket'
@@ -92,7 +120,7 @@ const FormTicket: FC<FormTicketProps> = props => {
           <Form.Control
             type="number"
             value={price}
-            onChange={e => setPrice(Number(e.currentTarget.value))}
+            onChange={e => setPrice(e.currentTarget.value)}
             placeholder="200.00"
             required
           />
@@ -101,12 +129,17 @@ const FormTicket: FC<FormTicketProps> = props => {
         <Button className="mb-3" type="submit">
           {props.id ? 'Update' : 'Create'}
         </Button>
-
-        {isDisplayedResult && createTicketErrors}
-        {isDisplayedResult && ticketCreatedData && (
-          <Alert variant="success">Ticket created</Alert>
-        )}
       </Form>
+
+      {isDisplayedResult && (createTicketErrors || updateTicketErrors)}
+
+      {isDisplayedResult &&
+        ((ticketCreatedData && (
+          <Alert variant="success">Ticket created</Alert>
+        )) ||
+          (ticketUpdatedData && (
+            <Alert variant="success">Ticket updated</Alert>
+          )))}
     </FormTicketContainer>
   );
 };
