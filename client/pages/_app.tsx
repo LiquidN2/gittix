@@ -31,7 +31,7 @@ MyApp.getInitialProps = async (appContext: AppContext) => {
     currentUser = null;
 
   try {
-    const client = buildClient(appContext);
+    const client = buildClient<AppContext>(appContext);
 
     // fetch current user
     const { data } = await client.get('/api/users/currentuser');
