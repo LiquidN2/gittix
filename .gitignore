@@ -2,3 +2,5 @@
 **/*/.env
 auth/.env
 common
+.idea
+.vscode
