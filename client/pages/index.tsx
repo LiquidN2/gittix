@@ -2,6 +2,8 @@ import type { NextPage, GetServerSideProps } from 'next';
 import Head from 'next/head';
 import { useEffect } from 'react';
 
+import Container from 'react-bootstrap/Container';
+
 import { buildClient } from '../api/build-client';
 
 interface HomePageProps {
@@ -15,18 +17,23 @@ const Home: NextPage<HomePageProps> = ({ currentUser, tickets }) => {
   }, []);
 
   return (
-    <div>
+    <>
       <Head>
         <title>
           Welcome to Gittix 🎫 | A place to buy & sell tickets of your favorite
           events
         </title>
       </Head>
-      <h1>Landing page !</h1>
-      <p>{currentUser ? 'Logged in' : 'Not logged in'}</p>
-      {tickets.length > 0 &&
-        tickets.map((ticket: any) => <div key={ticket.id}>{ticket.title}</div>)}
-    </div>
+      <div>
+        <Container>
+          <h1>Landing page !</h1>
+          {tickets.length > 0 &&
+            tickets.map((ticket: any) => (
+              <div key={ticket.id}>{ticket.title}</div>
+            ))}
+        </Container>
+      </div>
+    </>
   );
 };
 
