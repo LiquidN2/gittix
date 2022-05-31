@@ -15,7 +15,7 @@ export function withUnauthorizedAccess<P extends object>(
     useEffect(() => {
       if (!user) return;
       router.push('/').catch(e => console.error(e));
-    }, []);
+    }, [user, router]);
 
     if (user) return <div>Already logged in. Redirecting to home page ...</div>;
 

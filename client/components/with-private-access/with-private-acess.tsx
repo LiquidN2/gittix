@@ -15,7 +15,7 @@ export function withPrivateAccess<P extends object>(
     useEffect(() => {
       if (user) return;
       router.push('/auth/signin').catch(e => console.error(e));
-    }, []);
+    }, [user, router]);
 
     if (!user)
       return <div>Unauthorized access. Redirecting to login page...</div>;
