@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import { UserContext } from '../../contexts/user-context';
 
 // Redirect to home page if user is already authenticated
-export function withUnauthorizedAccess<P>(
+export function withUnauthorizedAccess<P extends object>(
   WrappedComponent: NextPage<P>
 ): NextPage<P> {
   return function Component(props) {

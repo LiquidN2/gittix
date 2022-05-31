@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import { UserContext } from '../../contexts/user-context';
 
 // Redirect to login page if unauthenticated
-export function withPrivateAccess<P>(
+export function withPrivateAccess<P extends object>(
   WrappedComponent: NextPage<P>
 ): NextPage<P> {
   return function Component(props) {
