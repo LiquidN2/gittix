@@ -50,6 +50,7 @@ const Header: FC = () => {
             <NavLinkText href="/" name="Home" />
             <NavLinkText href="/tickets" name="Tickets" />
           </Nav>
+          {user && <span className="me-3">Welcome, {user.email}</span>}
           <NavButtonGroup>
             {!user && (
               <NavLinkButton

@@ -5,6 +5,7 @@ import { useEffect } from 'react';
 import Container from 'react-bootstrap/Container';
 
 import { buildClient } from '../api/build-client';
+import TicketList from '../components/ticket/ticket-list';
 
 interface HomePageProps {
   currentUser: Record<string, any> | null;
@@ -14,7 +15,7 @@ interface HomePageProps {
 const Home: NextPage<HomePageProps> = ({ currentUser, tickets }) => {
   useEffect(() => {
     console.log(tickets);
-  }, []);
+  }, [tickets]);
 
   return (
     <>
@@ -27,10 +28,7 @@ const Home: NextPage<HomePageProps> = ({ currentUser, tickets }) => {
       <div>
         <Container>
           <h1>Landing page !</h1>
-          {tickets.length > 0 &&
-            tickets.map((ticket: any) => (
-              <div key={ticket.id}>{ticket.title}</div>
-            ))}
+          <TicketList tickets={tickets} />
         </Container>
       </div>
     </>
