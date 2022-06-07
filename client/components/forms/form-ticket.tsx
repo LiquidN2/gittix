@@ -1,4 +1,4 @@
-import { FC, FormEventHandler, useState, useEffect } from 'react';
+import { FC, FormEventHandler, useState, useEffect, ChangeEvent } from 'react';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import Alert from 'react-bootstrap/Alert';
@@ -109,7 +109,9 @@ const FormTicket: FC<FormTicketProps> = props => {
           <Form.Control
             type="text"
             value={title}
-            onChange={e => setTitle(e.currentTarget.value)}
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              setTitle(e.currentTarget.value)
+            }
             placeholder="Awesome Concert Ticket"
             required
           />
@@ -120,7 +122,9 @@ const FormTicket: FC<FormTicketProps> = props => {
           <Form.Control
             type="number"
             value={price}
-            onChange={e => setPrice(e.currentTarget.value)}
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              setPrice(e.currentTarget.value)
+            }
             placeholder="200.00"
             required
           />

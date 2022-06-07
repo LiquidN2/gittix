@@ -1,4 +1,4 @@
-import { FC, FormEventHandler, useState } from 'react';
+import { FC, FormEventHandler, useState, ChangeEvent } from 'react';
 import { useRouter } from 'next/router';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
@@ -57,7 +57,9 @@ const FormAuth: FC<FormAuthProps> = ({ type }) => {
           <Form.Control
             type="email"
             value={email}
-            onChange={e => setEmail(e.currentTarget.value)}
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              setEmail(e.currentTarget.value)
+            }
             required={true}
             placeholder="Email Address"
           />
@@ -71,7 +73,9 @@ const FormAuth: FC<FormAuthProps> = ({ type }) => {
           <Form.Control
             type="password"
             value={password}
-            onChange={e => setPassword(e.currentTarget.value)}
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              setPassword(e.currentTarget.value)
+            }
             required={true}
             placeholder="Password"
             // pattern=".{4,20}"
@@ -88,7 +92,9 @@ const FormAuth: FC<FormAuthProps> = ({ type }) => {
             <Form.Control
               type="password"
               value={passwordConfirm}
-              onChange={e => setPasswordConfirm(e.currentTarget.value)}
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                setPasswordConfirm(e.currentTarget.value)
+              }
               required={true}
               placeholder="Confirm Password"
               // pattern=".{4,20}"
